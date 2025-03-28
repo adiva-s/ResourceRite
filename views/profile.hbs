@@ -1,0 +1,134 @@
+<!-- views/profile.hbs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{user.username}}'s Profile</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            font-family: 'Boldonse', sans-serif;
+        }
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .section h2 {
+            margin-bottom: 10px;
+            font-size: 1.8em;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 8px;
+            margin-bottom: 5px;
+            background: #eaeaea;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        a {
+            text-decoration: none;
+            color: #2a6fd7;
+        }
+        button {
+            background-color: #2a6fd7;
+            font-family: 'Poppins', sans-serif;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div style="position: absolute; top: 20px; left: 20px;">
+        <a href="/" style="text-decoration: none;">
+            <button>Back to Marketplace</button>
+        </a>
+    </div>
+    
+    <div class="container">
+        <h1>{{user.username}}'s Profile</h1>
+
+        {{#if message}}
+            <div style="color: green; margin-bottom: 15px;">{{message}}</div>
+        {{/if}}
+
+        <!-- Wishlist Section -->
+        <div class="section">
+            <h2>Wishlist</h2>
+            <ul>
+                {{#if user.wishlist.length}}
+                    {{#each user.wishlist}}
+                        <li>
+                            <a href="/products/{{this._id}}">{{this.name}} - ${{this.price}}</a>
+                            <form action="/user/wishlist/{{this._id}}/remove" method="POST" style="display:inline;">
+                                <button type="submit">Remove</button>
+                            </form>
+                        </li>
+                    {{/each}}
+                {{else}}
+                    <li>Your wishlist is empty.</li>
+                {{/if}}
+            </ul>
+        </div>
+        
+        <!-- Saved Items Section -->
+        <div class="section">
+            <h2>Saved Items</h2>
+            <ul>
+                {{#if user.savedItems.length}}
+                    {{#each user.savedItems}}
+                        <li>
+                            <a href="/products/{{this._id}}">{{this.name}} - ${{this.price}}</a>
+                            <form action="/user/savedItems/{{this._id}}/remove" method="POST" style="display:inline;">
+                                <button type="submit">Remove</button>
+                            </form>
+                        </li>
+                    {{/each}}
+                {{else}}
+                    <li>No saved items found.</li>
+                {{/if}}
+            </ul>
+        </div>
+        
+        <!-- Purchase History Section -->
+        <div class="section">
+            <h2>Purchase History</h2>
+            <ul>
+                {{#if user.purchaseHistory.length}}
+                    {{#each user.purchaseHistory}}
+                        <li><a href="/products/{{this._id}}">{{this.name}} - ${{this.price}}</a> (Purchased on: {{this.date}})</li>
+                    {{/each}}
+                {{else}}
+                    <li>You have no purchase history yet.</li>
+                {{/if}}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!-- views/product.hbs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{product.name}}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            width: 80%;
+            margin: 100px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        h3, h4 {
+            margin-top: 20px;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .actions form button {
+            padding: 10px 20px;
+            background-color: #2a6fd7;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .actions form button:hover {
+            background-color: #1b4e9a;
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+        .back-button button {
+            padding: 10px 15px;
+            background-color: #2a6fd7;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .back-button button:hover {
+            background-color: #1b4e9a;
+        }
+        .message {
+            color: green;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="back-button">
+        <a href="/">
+            <button>Back to Marketplace</button>
+        </a>
+    </div>
+    
+    <div class="container">
+        {{#if message}}
+            <div class="message">{{message}}</div>
+        {{/if}}
+        
+        <h2>{{product.name}}</h2>
+        <img src="{{product.imageUrl}}" alt="{{product.name}}" style="max-width:200px;"><br/>
+        <strong>Category:</strong> {{product.category}}<br/>
+        <strong>Price:</strong> ${{product.price}}<br/>
+        <strong>Description:</strong> {{product.description}}<br/>
+        <strong>Seller:</strong> {{product.seller.username}} ({{product.seller.role}})<br/>
+
+        <h3>Reviews:</h3>
+        <ul>
+            {{#each product.reviews}}
+            <li>
+                <strong>{{this.user.username}}:</strong>
+                {{this.rating}}/5 stars – {{this.comment}}
+            </li>
+            {{/each}}
+            {{#if (not product.reviews.length)}}<p>No reviews yet.</p>{{/if}}
+        </ul>
+
+        {{#if currentUser}}
+            <h4>Leave a Review:</h4>
+            <form method="POST" action="/products/{{product._id}}/review">
+                <label for="rating">Rating:</label>
+                <select name="rating" id="rating">
+                    {{#each [1,2,3,4,5]}}
+                    <option value="{{this}}">{{this}}</option>
+                    {{/each}}
+                </select><br/><br/>
+                <label for="comment">Comment:</label><br/>
+                <textarea name="comment" rows="3" cols="40"></textarea><br/><br/>
+                <button type="submit" style="background-color: #2a6fd7; color: white; padding: 8px 16px; border: none; border-radius: 5px;">Submit Review</button>
+            </form>
+
+            <h4>Actions:</h4>
+            <div class="actions">
+
+                <!-- Adding to Wishlist Button -->
+                <form action="/products/{{product._id}}/wishlist" method="POST">
+                    <button type="submit">Add to Wishlist</button>
+                </form>
+
+                <!-- Adding to Saved Items Button -->
+                <form action="/products/{{product._id}}/save" method="POST">
+                    <button type="submit">Save Item</button>
+                </form>
+
+                <!-- Adding to Cart Button -->
+                <form action="/products/{{product._id}}/add-to-cart" method="POST">
+                    <button type="submit">Add to Cart</button>
+                </form>
+            </div>
+                
+        {{else}}
+            <p><a href="/auth/login">Log in</a> to leave a review or save items.</p>
+        {{/if}}
+    </div>
+
+</body>
+</html>

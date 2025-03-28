@@ -1,0 +1,24 @@
+<!-- views/layouts/main.hbs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ResourceRite Marketplace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Boldonse&display=swap" rel="stylesheet">
+
+</head>
+<body>
+<header>
+<h1>ResourceRite</h1>
+{{#if currentUser}}
+<p>Welcome, {{currentUser.username}} (Role: {{currentUser.role}}) | <a href="/auth/logout">Logout</a></p>
+{{else}}
+<a href="/auth/login">Login</a> | <a href="/auth/signup">Sign Up</a>
+{{/if}}
+<hr/>
+</header>
+{{{body}}} <!-- Content of the page will be injected here -->
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!-- views/cart.hbs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Cart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .checkout-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #2a6fd7;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .back-button {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .back-button button {
+            padding: 10px 20px;
+            background-color: #2a6fd7;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Back to Marketplace Button -->
+        <div class="back-button">
+            <a href="/">
+                <button>Back to Marketplace</button>
+            </a>
+        </div>
+
+        <h1>Your Cart</h1>
+
+        {{#if message}}
+            <div style="background-color: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+                {{message}}
+            </div>
+        {{/if}}
+
+        {{#if products.length}}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Category</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each products}}
+                    <tr>
+                        <td>{{this.name}}</td>
+                        <td>${{this.price}}</td>
+                        <td>{{this.category}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+            <h2>Total: ${{total}}</h2>
+            <form action="/checkout" method="POST">
+                <button type="submit" class="checkout-button">Checkout with Stripe</button>
+            </form>
+        {{else}}
+            <p>Your cart is empty.</p>
+        {{/if}}
+    </div>
+</body>
+</html>
