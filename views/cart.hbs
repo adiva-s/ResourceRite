@@ -12,7 +12,7 @@
         }
         .container {
             width: 80%;
-            margin: auto;
+            margin: 60px auto;
             padding: 20px;
             background: white;
             border-radius: 10px;
@@ -30,7 +30,10 @@
         th {
             background-color: #e0e0e0;
         }
-        .checkout-button, .clear-cart-button, .back-to-marketplace {
+        button {
+            font-family: 'Poppins', sans-serif;
+        }
+        .checkout-button, .clear-cart-button {
             margin-top: 20px;
             padding: 10px 20px;
             background-color: #2a6fd7;
@@ -38,8 +41,10 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            text-decoration: none; 
-            font-family: 'Poppins', sans-serif;
+            transition: transform 0.2s;
+        }
+        .checkout-button:hover, .clear-cart-button:hover {
+            transform: scale(1.05);
         }
         .quantity-controls {
             display: flex;
@@ -50,10 +55,20 @@
 </head>
 <body>
     <div class="container">
-
-        <div class="back-button">
-            <a href="/" class="back-to-marketplace">Back to Marketplace</a>
-        </div>
+        <div class="back-button" style="margin-bottom: 20px;">
+    <a href="/" style="text-decoration: none;">
+        <button style="
+            padding: 10px 15px; 
+            background-color: #2a6fd7; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: transform 0.2s;
+        ">Back to Marketplace</button>
+    </a>
+</div>
 
         <h1>Your Cart</h1>
 
@@ -100,47 +115,52 @@
             <p>Your cart is empty.</p>
         {{/if}}
     </div>
+</body>
 
-    <script>
-        async function updateCart(productId, action) {
-            const response = await fetch(`/cart/${productId}/${action}`, {
-                method: 'POST'
-            });
+<script>
+    async function updateCart(productId, action) {
+        const response = await fetch(`/cart/${productId}/${action}`, {
+            method: 'POST'
+        });
 
-            if (response.ok) {
-                const data = await response.json();
+        if (response.ok) {
+            const data = await response.json();
+            if (data.quantity !== undefined) {
                 document.querySelector(`[data-product-id="${productId}"] .quantity`).textContent = data.quantity;
-                document.getElementById("total-price").textContent = data.totalPrice;
+            }
 
-                if (data.quantity === 0) {
-                    document.querySelector(`[data-product-id="${productId}"]`).remove();
-                }
+            document.getElementById("total-price").textContent = data.totalPrice;
+
+            if (data.quantity === 0) {
+                document.querySelector(`[data-product-id="${productId}"]`).remove();
             }
         }
+    }
 
-        document.querySelectorAll('.increase-btn').forEach(button => {
-            button.addEventListener('click', (e) => {
-                e.preventDefault();
-                const productId = e.target.closest('tr').dataset.productId;
-                updateCart(productId, 'increase');
-            });
+    document.querySelectorAll('.increase-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            const productId = e.target.closest('tr').dataset.productId;
+            updateCart(productId, 'increase');
         });
+    });
 
-        document.querySelectorAll('.decrease-btn').forEach(button => {
-            button.addEventListener('click', (e) => {
-                e.preventDefault();
-                const productId = e.target.closest('tr').dataset.productId;
-                updateCart(productId, 'decrease');
-            });
+    document.querySelectorAll('.decrease-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            const productId = e.target.closest('tr').dataset.productId;
+            updateCart(productId, 'decrease');
         });
+    });
 
-        document.querySelectorAll('.delete-btn').forEach(button => {
-            button.addEventListener('click', (e) => {
-                e.preventDefault();
-                const productId = e.target.closest('tr').dataset.productId;
-                updateCart(productId, 'remove');
-            });
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            const productId = e.target.closest('tr').dataset.productId;
+            updateCart(productId, 'remove');
         });
-    </script>
-</body>
+    });
+</script>
+
+
 </html>

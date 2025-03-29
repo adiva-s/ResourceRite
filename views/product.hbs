@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{product.name}}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -40,9 +41,11 @@
             border-radius: 5px;
             cursor: pointer;
             transition: transform 0.2s;
+            font-family: 'Poppins', sans-serif;
         }
         .actions form button:hover {
             background-color: #1b4e9a;
+            transform: scale(1.05);
         }
         .back-button {
             position: absolute;
@@ -57,13 +60,17 @@
             border-radius: 5px;
             cursor: pointer;
             transition: transform 0.2s;
+            font-family: 'Poppins', sans-serif;
         }
         .back-button button:hover {
             background-color: #1b4e9a;
         }
         .message {
-            color: green;
-            margin-top: 10px;
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -79,13 +86,17 @@
         {{#if message}}
             <div class="message">{{message}}</div>
         {{/if}}
-        
+
         <h2>{{product.name}}</h2>
         <img src="{{product.imageUrl}}" alt="{{product.name}}" style="max-width:200px;"><br/>
         <strong>Category:</strong> {{product.category}}<br/>
         <strong>Price:</strong> ${{product.price}}<br/>
         <strong>Description:</strong> {{product.description}}<br/>
+        
+        <!-- Display Seller Information if available -->
+        {{#if product.seller}}
         <strong>Seller:</strong> {{product.seller.username}} ({{product.seller.role}})<br/>
+        {{/if}}
 
         <h3>Reviews:</h3>
         <ul>
@@ -98,6 +109,7 @@
             {{#if (not product.reviews.length)}}<p>No reviews yet.</p>{{/if}}
         </ul>
 
+        <!-- Allow actions only if a user is logged in -->
         {{#if currentUser}}
             <h4>Leave a Review:</h4>
             <form method="POST" action="/products/{{product._id}}/review">
@@ -109,28 +121,21 @@
                 </select><br/><br/>
                 <label for="comment">Comment:</label><br/>
                 <textarea name="comment" rows="3" cols="40"></textarea><br/><br/>
-                <button type="submit" style="background-color: #2a6fd7; color: white; padding: 8px 16px; border: none; border-radius: 5px;">Submit Review</button>
+                <button type="submit">Submit Review</button>
             </form>
 
             <h4>Actions:</h4>
             <div class="actions">
-
-                <!-- Adding to Wishlist Button -->
                 <form action="/products/{{product._id}}/wishlist" method="POST">
                     <button type="submit">Add to Wishlist</button>
                 </form>
-
-                <!-- Adding to Saved Items Button -->
                 <form action="/products/{{product._id}}/save" method="POST">
                     <button type="submit">Save Item</button>
                 </form>
-
-                <!-- Adding to Cart Button -->
                 <form action="/products/{{product._id}}/add-to-cart" method="POST">
                     <button type="submit">Add to Cart</button>
                 </form>
             </div>
-                
         {{else}}
             <p><a href="/auth/login">Log in</a> to leave a review or save items.</p>
         {{/if}}
