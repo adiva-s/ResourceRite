@@ -174,34 +174,37 @@ router.get('/payment/cancel', (req, res) => {
     res.send('Payment Cancelled. You can try again.');
 });
 
-// POST /products/:id/add-to-cart - Add item to cart
 router.post('/products/:id/add-to-cart', ensureLoggedIn, async (req, res) => {
     try {
-        if (!req.session.cart) req.session.cart = {};  // Initialize cart as an object
+        if (!req.session.cart) req.session.cart = {};
 
         const productId = req.params.id;
+        const product = await Product.findById(productId);
+
+        if (!product) return res.status(404).send('Product not found');
 
         if (req.session.cart[productId]) {
             req.session.cart[productId].quantity += 1;
         } else {
-            const product = await Product.findById(productId);
-
-            if (!product) return res.status(404).send('Product not found');
-            if (typeof product.price !== 'number') return res.status(500).send('Invalid product price');  // Make sure price is valid
-
-            req.session.cart[productId] = {   
+            req.session.cart[productId] = {
                 name: product.name,
-                price: product.price,  // Save the price as a number
+                price: product.price,
                 quantity: 1
             };
         }
 
-        res.redirect('/cart');
+        //  This is the magic that saves it before redirect
+        req.session.save(err => {
+            if (err) console.error("Session save error:", err);
+            res.redirect('/cart');
+        });
+
     } catch (error) {
-        console.error("Error adding product to cart:", error);
-        res.status(500).send('Server error.');
+        console.error("Error adding to cart:", error);
+        res.status(500).send('Error adding to cart.');
     }
 });
+
 
 
 

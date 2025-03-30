@@ -33,10 +33,18 @@ app.use(express.json());
 
 // Session configuration
 app.use(session({
-    secret: 'keyboard cat',
+    secret: 'keyboard cat',  // 🔑 Don't change this once deployed
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({ mongoUrl: process.env.MONGO_URI || 'mongodb://localhost:27017/resource_rite' })
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGO_URI || 'mongodb://localhost:27017/resource_rite',
+        ttl: 24 * 60 * 60  // 1 day
+    }),
+    cookie: {
+        secure: false,       //  must be false for local dev (http)
+        httpOnly: true,      // protects against XSS
+        maxAge: 1000 * 60 * 60 * 24  // 1 day in milliseconds
+    }
 }));
 
 // Initialize Passport for authentication
