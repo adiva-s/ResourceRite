@@ -166,13 +166,16 @@ router.post('/checkout', ensureLoggedIn, async (req, res) => {
 // GET /payment/success - Payment success page
 router.get('/payment/success', (req, res) => {
     req.session.cart = [];  // Clear the cart only if payment is successful
-    res.send('Payment Successful! Thank you for your purchase.');
+    res.render('paymentSuccess');
+
 });
 
 // GET /payment/cancel - Payment cancel page
 router.get('/payment/cancel', (req, res) => {
-    res.send('Payment Cancelled. You can try again.');
+    res.render('paymentCancel'); // Renders views/paymentCancel.hbs
 });
+
+
 
 router.post('/products/:id/add-to-cart', ensureLoggedIn, async (req, res) => {
     try {
