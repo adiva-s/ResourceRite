@@ -14,7 +14,16 @@ const userSchema = new mongoose.Schema({
     role: { type: String, default: 'user' },
     wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
     savedItems: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
-    purchaseHistory: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }]
+    purchaseHistory: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+    purchases: [
+        {
+            productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+            quantity: Number,
+            date: { type: Date, default: Date.now }
+        }
+    ]
+      
+      
 });
 
 const User = mongoose.model('User', userSchema);

@@ -72,4 +72,32 @@ router.get('/cancel', (req, res) => {
     res.send('Payment was cancelled.');
 });
 
+router.get('/profile', ensureLoggedIn, async (req, res) => {
+    try {
+        const user = await User.findById(req.session.userId)
+            .populate('wishlist')
+            .populate('savedItems')
+            .populate('purchases.productId');
+
+        res.render('profile', {
+            user: {
+                username: user.username,
+                wishlist: user.wishlist,
+                savedItems: user.savedItems,
+                purchaseHistory: user.purchases.map(p => ({
+                    _id: p.productId._id,
+                    name: p.productId.name,
+                    price: p.productId.price,
+                    date: p.date.toLocaleDateString(),
+                    quantity: p.quantity 
+                }))
+            }
+        });
+    } catch (error) {
+        console.error("Error loading profile:", error);
+        res.status(500).send("Unable to load profile.");
+    }
+});
+
+
 export default router;

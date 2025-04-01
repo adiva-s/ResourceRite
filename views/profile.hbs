@@ -122,13 +122,16 @@
             <ul>
                 {{#if user.purchaseHistory.length}}
                     {{#each user.purchaseHistory}}
-                        <li><a href="/products/{{this._id}}">{{this.name}} - ${{this.price}}</a> (Purchased on: {{this.date}})</li>
+                        <li>
+                            <a href="/products/{{this._id}}">{{this.name}} - ${{this.price}}</a>
+                            (Quantity: {{this.quantity}}, Purchased on: {{this.date}})
+                        </li>
                     {{/each}}
-                {{else}}
-                    <li>You have no purchase history yet.</li>
+                {{!-- {{else}}
+                    <li>You have no purchase history yet.</li> --}}
                 {{/if}}
             </ul>
-        </div>
-    </div>
+        </div>    
+
 </body>
 </html>

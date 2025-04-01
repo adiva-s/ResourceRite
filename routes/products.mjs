@@ -32,7 +32,7 @@ router.get('/', async (req, res) => {
 });
 
 
-// ✅ New Route: Show individual product details
+//  Show individual product details
 router.get('/products/:id', async (req, res) => {
     try {
         // Find the product and populate the 'seller' field (if it exists in your model)
@@ -164,11 +164,40 @@ router.post('/checkout', ensureLoggedIn, async (req, res) => {
 
 
 // GET /payment/success - Payment success page
-router.get('/payment/success', (req, res) => {
-    req.session.cart = [];  // Clear the cart only if payment is successful
-    res.render('paymentSuccess');
+router.get('/payment/success', async (req, res) => {
+    try {
+        console.log("🛒 Cart at success:", req.session.cart);
+        console.log("👤 User ID:", req.session.userId);
 
+        const cart = req.session.cart || {};
+        const user = await User.findById(req.session.userId);
+
+        if (!user) {
+            console.log("❌ No user found");
+            return res.redirect('/');
+        }
+
+        for (const productId in cart) {
+            user.purchases.push({
+                productId,
+                quantity: cart[productId].quantity,
+                date: new Date()
+            });
+        }
+
+        await user.save();
+        req.session.cart = {};
+
+        console.log("✅ Purchase saved.");
+        res.render('paymentSuccess');
+    } catch (error) {
+        console.error("⚠️ Error saving transaction:", error);
+        if (!res.headersSent) {
+            res.status(500).send("Something went wrong saving your purchase.");
+        }
+    }
 });
+
 
 // GET /payment/cancel - Payment cancel page
 router.get('/payment/cancel', (req, res) => {
@@ -269,6 +298,37 @@ router.post('/cart/clear', ensureLoggedIn, (req, res) => {
     req.session.cart = {};  // Clear the entire cart
     res.redirect('/cart');
 });
+
+router.get('/profile', ensureLoggedIn, async (req, res) => {
+    try {
+        const user = await User.findById(req.session.userId)
+            .populate('wishlist')
+            .populate('savedItems')
+            .populate('purchases.productId');
+
+        console.log("👉 Purchase History on profile load:", user.purchases);
+
+        res.render('profile', {
+            user: {
+                username: user.username,
+                wishlist: user.wishlist,
+                savedItems: user.savedItems,
+                purchaseHistory: user.purchases.map(p => ({
+                    _id: p.productId._id,
+                    name: p.productId.name,
+                    price: p.productId.price,
+                    date: p.date.toLocaleDateString(),
+                    quantity: p.quantity
+                }))
+            }
+        });
+    } catch (error) {
+        console.error("Error loading profile:", error);
+        res.status(500).send("Unable to load profile.");
+    }
+});
+
+
 
 
 export default router;
