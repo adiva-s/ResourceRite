@@ -3,14 +3,19 @@ import mongoose from 'mongoose';
 const userSchema = new mongoose.Schema({
     username: { 
         type: String, 
-        required: function() { return !this.googleId; } // Required only for regular signup users
+        required: function () { return !this.googleId; }
+    },
+    email: { 
+        type: String,
+        required: function () { return !this.googleId; }, // Only required if NOT using Google OAuth
+        unique: true  // Optional: Ensures one email per user
     },
     password: { 
         type: String, 
-        required: function() { return !this.googleId; } // Required only for regular signup users
+        required: function () { return !this.googleId; }
     },
-    googleId: { type: String, required: false }, // Only for Google OAuth users
-    name: { type: String, required: false },     // Display name for Google OAuth users
+    googleId: { type: String },
+    name: { type: String },
     role: { type: String, default: 'user' },
     wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
     savedItems: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
@@ -22,10 +27,7 @@ const userSchema = new mongoose.Schema({
             date: { type: Date, default: Date.now }
         }
     ]
-      
-      
 });
 
 const User = mongoose.model('User', userSchema);
-
 export default User;

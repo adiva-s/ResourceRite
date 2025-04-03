@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .signup-container {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 25px;
+      font-size: 28px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    .password-container {
+      position: relative;
+    }
+
+    .password-container button {
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .main-button {
+      background-color: #2a6fd7;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    .google-btn {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      color: #555;
+      margin-top: 15px;
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .google-btn img {
+      width: 20px;
+      height: 20px;
+    }
+
+    p {
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    a {
+      color: #2a6fd7;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="signup-container">
+    <h1>Create Your Account</h1>
+    <form action="/auth/signup" method="POST" onsubmit="return validatePasswords()">
+      <input type="text" name="name" placeholder="Full Name" required />
+      <input type="text" name="username" placeholder="Username" required />
+      <input type="email" name="email" placeholder="Email" required />
+
+      <div class="password-container">
+        <input type="password" name="password" id="password" placeholder="Password" required />
+        <button type="button" onclick="toggleVisibility('password')">👁</button>
+      </div>
+
+      <div class="password-container">
+        <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Re-enter Password" required />
+        <button type="button" onclick="toggleVisibility('confirmPassword')">👁</button> 
+      </div>
+
+      <button type="submit" class="main-button">Sign Up</button>
+    </form>
+
+    <form action="/auth/google" method="GET">
+      <button class="google-btn" type="submit">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png" alt="Google Logo" />
+        Sign up with Google
+      </button>
+    </form>
+
+    <p>Already have an account? <a href="/login">Log in here</a></p>
+  </div>
+
+  <script>
+    function toggleVisibility(id) {
+      const field = document.getElementById(id);
+      field.type = field.type === 'password' ? 'text' : 'password';
+    }
+
+    function validatePasswords() {
+      const pw1 = document.getElementById("password").value;
+      const pw2 = document.getElementById("confirmPassword").value;
+
+      if (pw1 !== pw2) {
+        alert("❗ Passwords do not match!");  
+        return false;
+      }
+      return true;
+    }
+  </script>
+
+</body>
+</html>

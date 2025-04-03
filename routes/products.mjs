@@ -166,9 +166,6 @@ router.post('/checkout', ensureLoggedIn, async (req, res) => {
 // GET /payment/success - Payment success page
 router.get('/payment/success', async (req, res) => {
     try {
-        console.log("🛒 Cart at success:", req.session.cart);
-        console.log("👤 User ID:", req.session.userId);
-
         const cart = req.session.cart || {};
         const user = await User.findById(req.session.userId);
 
@@ -237,9 +234,6 @@ router.post('/products/:id/add-to-cart', ensureLoggedIn, async (req, res) => {
     }
 });
 
-
-
-
 // Increase Quantity
 router.post('/cart/:id/increase', ensureLoggedIn, (req, res) => {
     const productId = req.params.id;
@@ -299,6 +293,7 @@ router.post('/cart/clear', ensureLoggedIn, (req, res) => {
     res.redirect('/cart');
 });
 
+// GET / profile
 router.get('/profile', ensureLoggedIn, async (req, res) => {
     try {
         const user = await User.findById(req.session.userId)
@@ -327,8 +322,6 @@ router.get('/profile', ensureLoggedIn, async (req, res) => {
         res.status(500).send("Unable to load profile.");
     }
 });
-
-
 
 
 export default router;

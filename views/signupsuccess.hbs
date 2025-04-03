@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Signup Successful</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f7f7f7;
+            text-align: center;
+            padding-top: 100px;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 400px;
+            margin: auto;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            color: white;
+            background: #2a6fd7;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🎉 Welcome, {{name}}!</h1>
+        <p>Your account has been created successfully.</p>
+        <a href="/auth/login">Log In</a>
+    </div>
+</body>
+</html>

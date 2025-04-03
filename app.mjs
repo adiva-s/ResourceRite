@@ -53,20 +53,31 @@ app.use(passport.session());
 
 // Middleware to make current user available in templates (Integrated solution)
 app.use(async (req, res, next) => {
-    if (req.session.passport && req.session.passport.user) {  // Check if user is authenticated via Passport
-        try {
-            const user = await User.findById(req.session.passport.user);
-            req.user = user; // Attach user object to the request
-            res.locals.currentUser = user; // Make it available to your templates
-        } catch (error) {
-            console.error("Error fetching user from session:", error);
+    try {
+        let userId = null;
+
+        if (req.session.passport && req.session.passport.user) {
+            userId = req.session.passport.user;
+        } else if (req.session.userId) {
+            userId = req.session.userId;
+        }
+
+        if (userId) {
+            const user = await User.findById(userId);
+            req.user = user;
+            res.locals.currentUser = user;
+        } else {
             res.locals.currentUser = null;
         }
-    } else {
+
+        next();
+    } catch (error) {
+        console.error("Error fetching user:", error);
         res.locals.currentUser = null;
+        next();
     }
-    next();
 });
+
 
 
 // Set up Handlebars as the view engine

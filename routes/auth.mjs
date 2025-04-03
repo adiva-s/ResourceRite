@@ -11,21 +11,40 @@ router.get('/signup', (req, res) => {
 });
 
 // POST /auth/signup - handle new user registration
+// POST /auth/signup - handle new user registration
 router.post('/signup', async (req, res) => {
     try {
-        const { username, password, role } = req.body;
+        const { name, username, email, password, confirmPassword, role } = req.body;
+
+        if (password !== confirmPassword) {
+            return res.render('signup', { message: "❗ Passwords do not match!" });
+        }
+
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.render('signup', { message: "❗ Email already in use!" });
+        }
 
         const hashedPassword = bcrypt.hashSync(password, 10);
 
-        const newUser = await User.create({ username, password: hashedPassword, role });
+        const newUser = await User.create({
+            name,
+            username,
+            email,
+            password: hashedPassword,
+            role
+        });
 
-        req.session.userId = newUser._id;
-        res.redirect('/user/profile');
+        // Render a welcome page instead of redirecting right away
+        res.render('signupSuccess', { name: newUser.name });
+
     } catch (err) {
         console.error(err);
-        res.redirect('/auth/signup');
+        res.render('signup', { message: "Something went wrong. Try again." });
     }
 });
+
+
 
 // GET /auth/login - show login form
 router.get('/login', (req, res) => { 
