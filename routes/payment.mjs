@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'; 
 import express from 'express';
 import Product from '../models/Product.mjs';
 import ensureLoggedIn from '../middleware/auth.mjs';
@@ -60,12 +61,38 @@ router.post('/checkout', ensureLoggedIn, async (req, res) => {
     }
 });
 
+// Payment success route
+router.get('/success', ensureLoggedIn, async (req, res) => {
+    try {
+        const cart = req.session.cart || {};
+        const user = await User.findById(req.session.userId);
 
-// Successful payment page
-router.get('/success', (req, res) => {
-    req.session.cart = []; // Clear cart upon successful payment
-    res.send('Payment successful! Thank you for your purchase.');
+        if (!user) {
+            console.log("❌ No user found");
+            return res.redirect('/');
+        }
+
+        for (const productId in cart) {
+            user.purchases.push({
+                productId: new mongoose.Types.ObjectId(productId),
+                quantity: cart[productId].quantity,
+                date: new Date()
+            });
+        }
+
+        await user.save();
+        req.session.cart = {}; // Clear cart after saving
+        console.log("✅ Purchase saved.");
+
+        res.render('paymentSuccess'); // <- Make sure this view exists
+    } catch (error) {
+        console.error("⚠️ Error saving transaction:", error);
+        if (!res.headersSent) {
+            res.status(500).send("Something went wrong saving your purchase.");
+        }
+    }
 });
+
 
 // Cancelled payment page
 router.get('/cancel', (req, res) => {

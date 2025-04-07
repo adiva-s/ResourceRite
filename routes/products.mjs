@@ -7,6 +7,8 @@ import Product from '../models/Product.mjs';
 import ensureLoggedIn from '../middleware/auth.mjs';
 import Stripe from 'stripe';
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+
 dotenv.config();
 
 const router = express.Router();
@@ -176,11 +178,11 @@ router.get('/payment/success', async (req, res) => {
 
         for (const productId in cart) {
             user.purchases.push({
-                productId,
+                productId: new mongoose.Types.ObjectId(productId),
                 quantity: cart[productId].quantity,
                 date: new Date()
             });
-        }
+        }        
 
         await user.save();
         req.session.cart = {};
