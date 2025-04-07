@@ -18,9 +18,12 @@ router.get('/checkout', ensureLoggedIn, async (req, res) => {
 
         const products = await Product.find({ _id: { $in: req.session.cart } });
 
-        const totalAmount = products.reduce((total, product) => total + product.price, 0);
+        const subtotal = products.reduce((total, product) => total + product.price, 0);
+        const tax = +(subtotal * 0.06).toFixed(2); // 6% tax
+        const finalTotal = +(subtotal + tax).toFixed(2);
 
-        res.render('checkout', { products, totalAmount });
+
+        res.render('checkout', { products, subtotal, tax, finalTotal });
     } catch (error) {
         console.error(error);
         res.status(500).send('Error displaying checkout page.');

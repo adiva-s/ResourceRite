@@ -107,20 +107,29 @@ router.post('/products/:id/save', ensureLoggedIn, async (req, res) => {
 // GET /cart - Display cart page
 router.get('/cart', ensureLoggedIn, (req, res) => {
     const cart = req.session.cart || {};
-    let totalPrice = 0;
+    let subtotal = 0;
     const products = [];
 
     // Convert cart object to an array of products for rendering
     for (const productId in cart) {
         const item = cart[productId];
         products.push({ id: productId, ...item });
-        totalPrice += item.price * item.quantity;
+        subtotal += item.price * item.quantity;
     }
 
-    res.render('cart', { products, totalPrice });
+    const rawTax = subtotal * 0.07;
+    const rawTotal = subtotal + rawTax;
+
+    res.render('cart', {
+        products,
+        subtotal: subtotal.toFixed(2),
+        tax: rawTax.toFixed(2),
+        totalPrice: rawTotal.toFixed(2)
+    });
 });
 
 
+// POST /checkout - Checkout and pay with Stripe
 // POST /checkout - Checkout and pay with Stripe
 router.post('/checkout', ensureLoggedIn, async (req, res) => {
     try {
@@ -133,6 +142,15 @@ router.post('/checkout', ensureLoggedIn, async (req, res) => {
 
         if (products.length === 0) return res.redirect('/cart');
 
+        // Calculate subtotal
+        const subtotal = products.reduce((sum, product) => {
+            const quantity = req.session.cart[product._id.toString()].quantity;
+            return sum + (product.price * quantity);
+        }, 0);
+
+        const tax = parseFloat((subtotal * 0.07).toFixed(2)); // 7% tax
+
+        // Create line items for Stripe
         const lineItems = products.map(product => {
             const productId = product._id.toString();
             const quantity = req.session.cart[productId].quantity;
@@ -143,10 +161,22 @@ router.post('/checkout', ensureLoggedIn, async (req, res) => {
                     product_data: {
                         name: product.name,
                     },
-                    unit_amount: product.price * 100,
+                    unit_amount: Math.round(product.price * 100), // cents
                 },
                 quantity: quantity,
             };
+        });
+
+        // Add tax as a separate item
+        lineItems.push({
+            price_data: {
+                currency: 'usd',
+                product_data: {
+                    name: 'Tax (7%)',
+                },
+                unit_amount: Math.round(tax * 100), // cents
+            },
+            quantity: 1,
         });
 
         const session = await stripeClient.checkout.sessions.create({
@@ -159,10 +189,11 @@ router.post('/checkout', ensureLoggedIn, async (req, res) => {
 
         res.redirect(303, session.url);
     } catch (error) {
-        console.error("Error processing payment:", error);  // More details will be logged here
+        console.error("Error processing payment:", error);
         res.status(500).send('Error processing payment.');
     }
 });
+
 
 
 // GET /payment/success - Payment success page

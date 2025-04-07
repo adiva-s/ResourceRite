@@ -77,10 +77,13 @@
             </tbody>
         </table>
 
-        <div class="total">Total Amount: ${{totalAmount}}</div>
+        <div class="total">Subtotal: ${{subtotal}}</div>
+    <div class="total">Tax (6%): ${{tax}}</div>
+    <div class="total"><strong>Total: ${{finalTotal}}</strong></div>
+
         
         <form action="/payment/checkout" method="POST">
-            <input type="hidden" name="totalAmount" value="{{totalAmount}}">
+            <input type="hidden" name="totalAmount" value="{{finalAmount}}">
             <button type="submit" class="checkout-btn">Proceed to Payment</button>
         </form>
         {{else}}

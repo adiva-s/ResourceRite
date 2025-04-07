@@ -106,7 +106,12 @@
                 </tbody>
             </table>
 
-            <h2>Total: $<span id="total-price">{{totalPrice}}</span></h2>
+            <div style="text-align: left margin-top: 20px;">
+                <p>Subtotal: ${{subtotal}}</p>
+                <p>Tax (7%): ${{tax}}</p>
+                <h2>Total: $<span id="total-price">{{totalPrice}}</span></h2>
+            </div>
+
 
             <form action="/checkout" method="POST">
                 <button type="submit" class="checkout-button">Checkout</button>
