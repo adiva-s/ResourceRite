@@ -75,18 +75,20 @@ router.get('/success', ensureLoggedIn, async (req, res) => {
             return res.redirect('/');
         }
 
+        // In your payment success route, ensure you include a delivery status
         for (const productId in cart) {
             user.purchases.push({
-                productId: new mongoose.Types.ObjectId(productId),
-                quantity: cart[productId].quantity,
-                date: new Date()
-            });
-        }
+            productId: new mongoose.Types.ObjectId(productId),
+            quantity: cart[productId].quantity,
+            date: new Date(),
+            deliveryStatus: "Pending"  // Or any other status you want to set
+    });
+}
+
 
         await user.save();
         req.session.cart = {}; // Clear cart after saving
         console.log("✅ Purchase saved.");
-
         res.render('paymentSuccess'); // <- Make sure this view exists
     } catch (error) {
         console.error("⚠️ Error saving transaction:", error);

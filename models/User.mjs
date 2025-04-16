@@ -24,9 +24,11 @@ const userSchema = new mongoose.Schema({
         {
             productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
             quantity: Number,
-            date: { type: Date, default: Date.now }
+            date: { type: Date, default: Date.now },
+            deliveryStatus: { type: String, default: 'Processing' } 
         }
     ]
+    
 });
 
 const User = mongoose.model('User', userSchema);

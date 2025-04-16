@@ -107,29 +107,28 @@ router.post('/products/:id/save', ensureLoggedIn, async (req, res) => {
 // GET /cart - Display cart page
 router.get('/cart', ensureLoggedIn, (req, res) => {
     const cart = req.session.cart || {};
+    let totalPrice = 0;
     let subtotal = 0;
+    let tax = 0;
     const products = [];
 
-    // Convert cart object to an array of products for rendering
     for (const productId in cart) {
         const item = cart[productId];
         products.push({ id: productId, ...item });
         subtotal += item.price * item.quantity;
     }
 
-    const rawTax = subtotal * 0.07;
-    const rawTotal = subtotal + rawTax;
+    // Round to 2 decimal places
+    tax = (subtotal * 0.07).toFixed(2);           
+    subtotal = subtotal.toFixed(2);               
+    totalPrice = (parseFloat(subtotal) + parseFloat(tax)).toFixed(2);
 
-    res.render('cart', {
-        products,
-        subtotal: subtotal.toFixed(2),
-        tax: rawTax.toFixed(2),
-        totalPrice: rawTotal.toFixed(2)
-    });
+
+
+    res.render('cart', { products, subtotal, tax, totalPrice });
 });
 
 
-// POST /checkout - Checkout and pay with Stripe
 // POST /checkout - Checkout and pay with Stripe
 router.post('/checkout', ensureLoggedIn, async (req, res) => {
     try {

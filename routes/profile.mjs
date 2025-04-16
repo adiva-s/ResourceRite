@@ -15,7 +15,7 @@ router.get('/profile', ensureLoggedIn, async (req, res) => {
         const user = await User.findById(req.session.userId)
             .populate('wishlist')
             .populate('savedItems')
-            .populate('purchases.productId')
+            .populate('purchases.productId');
 
         if (!user) return res.redirect('/auth/login');
 
@@ -33,7 +33,8 @@ router.get('/profile', ensureLoggedIn, async (req, res) => {
                   name: product?.name || 'Unknown Product',
                   price: product?.price || 'N/A',
                   quantity: p.quantity,
-                  date: p.date.toLocaleDateString()
+                  date: p.date.toLocaleDateString(),
+                  deliveryStatus: p.deliveryStatus || 'Not Available'
                 };
               })
             }
