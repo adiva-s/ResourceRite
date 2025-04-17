@@ -1,16 +1,29 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import bcrypt from 'bcrypt';
 import User from '../models/User.mjs';
 import passport from 'passport';
+import nodemailer from 'nodemailer';
+import crypto from 'crypto';
+
 
 const router = express.Router();
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+});
+
 
 // GET /auth/signup - show signup form
 router.get('/signup', (req, res) => { 
     res.render('signup'); 
 });
 
-// POST /auth/signup - handle new user registration
 // POST /auth/signup - handle new user registration
 router.post('/signup', async (req, res) => {
     try {
@@ -106,5 +119,108 @@ router.get('/google/callback',
         }
     }
 );
+
+// GET / Show forgot password form
+router.get('/forgot', (req, res) => {
+    res.render('forgot', { message: "✅ A password reset link has been sent to your email." });
+});
+ 
+// POST / Handle password reset request
+router.post('/forgot', async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.render('forgot', { message: "❗ No account found with that email." });
+        }
+
+        // Generate secure token
+        const token = crypto.randomBytes(32).toString('hex');
+        const expiry = Date.now() + 3600000; // 1 hour
+
+        // Save token to user
+        user.resetPasswordToken = token;
+        user.resetPasswordExpires = expiry;
+        await user.save();
+
+        // Build reset link
+        const resetLink = `http://localhost:3000/auth/reset/${token}`;
+
+        // Send email
+        await transporter.sendMail({
+            to: user.email,
+            from: process.env.EMAIL_USER,
+            subject: 'Password Reset Request - ResourceRite',
+            html: `
+                <h3>Reset Your Password</h3>
+                <p>Click the link below to reset your password:</p>
+                <a href="${resetLink}">${resetLink}</a>
+                <p>This link will expire in 1 hour.</p>
+            `
+        });
+
+        res.render('forgot', { message: "✅ A password reset link has been sent to your email." });
+    } catch (err) {
+        console.error("❌ Error in forgot route:", err);
+        res.render('forgot', { message: "⚠️ Something went wrong. Please try again." });
+    }
+});
+
+// GET /auth/reset/:token
+router.get('/reset/:token', async (req, res) => {
+    try {
+        const user = await User.findOne({
+            resetPasswordToken: req.params.token,
+            resetPasswordExpires: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            return res.send("❌ Invalid or expired token.");
+        }
+
+        res.render('resetPassword', { token: req.params.token });
+    } catch (err) {
+        console.error("⚠️ Error loading reset form:", err);
+        res.send("Something went wrong.");
+    }
+});
+
+// POST /auth/reset/:token
+router.post('/reset/:token', async (req, res) => {
+    try {
+        const { password, confirmPassword } = req.body;
+
+        if (password !== confirmPassword) {
+            return res.send("❗Passwords do not match.");
+        }
+
+        const user = await User.findOne({
+            resetPasswordToken: req.params.token,
+            resetPasswordExpires: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            return res.send("❌ Token is invalid or has expired.");
+        }
+
+        // Hash new password
+        const hashedPassword = bcrypt.hashSync(password, 10);
+        user.password = hashedPassword;
+
+        // Clear token fields
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+
+        await user.save();
+
+        // Log them in or show success
+        res.render('resetSuccess');
+    } catch (err) {
+        console.error("❌ Error resetting password:", err);
+        res.send("⚠️ Something went wrong. Try again.");
+    }
+});
+
 
 export default router;

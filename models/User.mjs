@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
     email: { 
         type: String,
         required: function () { return !this.googleId; }, // Only required if NOT using Google OAuth
-        unique: true  // Optional: Ensures one email per user
+        unique: true  
     },
     password: { 
         type: String, 
@@ -27,8 +27,9 @@ const userSchema = new mongoose.Schema({
             date: { type: Date, default: Date.now },
             deliveryStatus: { type: String, default: 'Processing' } 
         }
-    ]
-    
+    ],
+    resetPasswordToken: String, 
+    resetPasswordExpires: Date 
 });
 
 const User = mongoose.model('User', userSchema);
