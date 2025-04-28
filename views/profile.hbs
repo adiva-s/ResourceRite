@@ -9,7 +9,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f0f0f0;
@@ -23,7 +23,7 @@
             text-align: center;
             font-size: 2.5em;
             margin-bottom: 20px;
-            font-family: 'Boldonse', sans-serif;
+            font-family: 'Poppins', sans-serif;
         }
         .section {
             background: white;
@@ -61,6 +61,14 @@
             padding: 5px 10px;
             border-radius: 5px;
             cursor: pointer;
+        }
+        input {
+            width: 90%;
+            padding: 8px;
+            margin-top: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -133,5 +141,29 @@
             </ul>
         </div>    
 
+        <!-- Edit Profile Section -->
+        <div class="section">
+            <h2>Edit Profile Info</h2>
+            <form action="/profile/edit" method="POST">
+                <input type="text" name="name" placeholder="Name" value="{{#if user.name}}{{user.name}}{{else}}Name not set{{/if}}" required><br>
+                <input type="text" name="username" placeholder="Username" value="{{#if user.username}}{{user.username}}{{else}}Username not set{{/if}}" required><br>
+                <input type="email" name="email" placeholder="Email" value="{{#if user.email}}{{user.email}}{{else}}Email not set{{/if}}" required><br>
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+
+        <!-- Reset Password Section -->
+        <div class="section">
+            <h2>Reset Password</h2>
+            <form action="/profile/resetPassword" method="POST">
+                <input type="password" name="currentPassword" placeholder="Current Password" required><br>
+                <input type="password" name="newPassword" placeholder="New Password" required><br>
+                <input type="password" name="confirmNewPassword" placeholder="Confirm New Password" required><br>
+                <button type="submit">Update Password</button>
+            </form>
+        </div>
+
+
+    </div>
 </body>
 </html>

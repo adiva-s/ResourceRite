@@ -102,7 +102,8 @@
     <h1>Create Your Account</h1>
     <form action="/auth/signup" method="POST" onsubmit="return validatePasswords()">
       <input type="text" name="name" placeholder="Full Name" required />
-      <input type="text" name="username" placeholder="Username" required />
+      <input type="text" id="username" name="username" placeholder="Username" required />
+      <span id="username-status" style="font-size: 13px; margin-top: 2px; display: block;"></span>
       <input type="email" name="email" placeholder="Email" required />
 
       <div class="password-container">
@@ -144,6 +145,34 @@
       }
       return true;
     }
+
+    // Live Username Availability Checker
+    const usernameInput = document.getElementById('username');
+    const usernameStatus = document.getElementById('username-status');
+
+    usernameInput.addEventListener('input', async () => {
+    const username = usernameInput.value.trim().toLowerCase();
+
+    if (username.length < 3) {
+      usernameStatus.textContent = '';
+      return;
+    }
+
+    try {
+      const response = await fetch(`/auth/check-username?username=${username}`);
+      const data = await response.json();
+
+      if (data.available) {
+        usernameStatus.textContent = '✅ Username available!';
+        usernameStatus.style.color = 'green';
+      } else {
+        usernameStatus.textContent = 'X Username taken';
+        usernameStatus.style.color = 'red';
+      }
+    } catch (err) {
+      console.error('Error checking username:', err);
+    }
+  });
   </script>
 
 </body>

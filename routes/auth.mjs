@@ -25,17 +25,34 @@ router.get('/signup', (req, res) => {
 });
 
 // POST /auth/signup - handle new user registration
+// POST /auth/signup - handle new user registration
 router.post('/signup', async (req, res) => {
     try {
-        const { name, username, email, password, confirmPassword, role } = req.body;
+        let { name, username, email, password, confirmPassword, role } = req.body;
 
         if (password !== confirmPassword) {
             return res.render('signup', { message: "❗ Passwords do not match!" });
         }
 
+        // Password strength validation
+        const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$/;
+        if (!passwordRegex.test(password)) {
+            return res.render('signup', { message: "❗ Password must be at least 8 characters, include a number and a special character." });
+        }
+
+        // Auto-lowercase username
+        username = username.toLowerCase();
+
+        // Email uniqueness check
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.render('signup', { message: "❗ Email already in use!" });
+        }
+
+        // Username uniqueness check
+        const existingUsername = await User.findOne({ username });
+        if (existingUsername) {
+            return res.render('signup', { message: "❗ Username already taken. Please choose another one." });
         }
 
         const hashedPassword = bcrypt.hashSync(password, 10);
@@ -56,6 +73,7 @@ router.post('/signup', async (req, res) => {
         res.render('signup', { message: "Something went wrong. Try again." });
     }
 });
+
 
 
 
@@ -219,6 +237,22 @@ router.post('/reset/:token', async (req, res) => {
     } catch (err) {
         console.error("❌ Error resetting password:", err);
         res.send("⚠️ Something went wrong. Try again.");
+    }
+});
+
+// GET /auth/check-username?username=whatever
+router.get('/auth/check-username', async (req, res) => {
+    const { username } = req.query;
+    if (!username) {
+        return res.json({ available: false });
+    }
+
+    const existingUser = await User.findOne({ username: username.toLowerCase() });
+
+    if (existingUser) {
+        return res.json({ available: false });
+    } else {
+        return res.json({ available: true });
     }
 });
 

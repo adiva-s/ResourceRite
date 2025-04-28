@@ -101,6 +101,8 @@ app.use('/auth', authRoutes);
 app.use('/user', profileRoutes);
 // app.use('/products', productRoutes);
 app.use('/payment', paymentRoutes);
+app.use('/', profileRoutes);
+
 
 
 // Google OAuth Strategy
