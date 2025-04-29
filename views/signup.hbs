@@ -124,16 +124,12 @@
         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png" alt="Google Logo" />
         Sign up with Google
       </button>
-    </form>
 
-    <!-- testing signup to login redirect-->  
-    <form onSubmit={handleSubmit} className="auth-form">
-      {error && <div className="auth-error">{error}</div>}
-      {confirmError && <div className="auth-error">{confirmError}</div>}
-       <p className="auth-link">
-            Already have an account? <Link to="/login">Log in here</Link>
-          </p>
+      
+
     </form>
+    <!-- testing signup to login-->
+    <div> <p>Already have an account? <a href="/auth/login">Log in here</a></p> </div>
     
   </div>
 
