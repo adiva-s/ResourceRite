@@ -103,7 +103,11 @@ app.use('/user', profileRoutes);
 app.use('/payment', paymentRoutes);
 app.use('/', profileRoutes);
 
-
+//Testing redirect to login from signup
+app.get('/login', (req, res) => {
+    res.redirect('/auth/login');  // ✅ Catches Passport's default behavior
+  });
+  
 
 // Google OAuth Strategy
 passport.use(new GoogleStrategy({
