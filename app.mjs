@@ -14,7 +14,6 @@ import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import User from './models/User.mjs';
 import Stripe from 'stripe';
-import authRoutes from './routes/auth.mjs';
 
 // Initialize Stripe with secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);

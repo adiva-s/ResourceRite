@@ -78,9 +78,15 @@ router.post('/signup', async (req, res) => {
 
 
 // GET /auth/login - show login form
-router.get('/login', (req, res) => { 
-    res.render('login'); 
-});
+//router.get('/login', (req, res) => { 
+//    res.render('login'); 
+//});
+
+// Testing this to see if it works, else use the one above
+app.get('/login', (req, res) => {
+    res.redirect('/auth/login');
+  });
+  
 
 // POST /auth/login - authenticate user
 router.post('/login', async (req, res) => {
