@@ -78,7 +78,15 @@ app.use(async (req, res, next) => {
     }
 });
 
-
+// Testing signup to login redirect
+// Middleware to protect routes that require authentication
+function ensureAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+      return next();
+    }
+    res.redirect('/auth/login'); // ✅ Ensures correct login route
+  }
+  
 
 // Set up Handlebars as the view engine
 app.set('view engine', 'hbs');
@@ -104,8 +112,8 @@ app.use('/payment', paymentRoutes);
 app.use('/', profileRoutes);
 
 //Testing redirect to login from signup
-app.get('/login', (req, res) => {
-    res.redirect('/auth/login');  // ✅ Catches Passport's default behavior
+app.get('/login', ensureAuthenticated, (req, res) => {
+    res.render('login');
   });
   
 
