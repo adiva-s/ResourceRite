@@ -80,7 +80,8 @@ router.post('/signup', async (req, res) => {
 // GET /auth/login - show login form
 router.get('/login', (req, res) => { 
     res.render('login'); 
-  });
+});
+
 
 // POST /auth/login - authenticate user
 router.post('/login', async (req, res) => {
