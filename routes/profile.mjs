@@ -114,11 +114,17 @@ router.post('/profile/resetPassword', ensureLoggedIn, async (req, res) => {
         const { currentPassword, newPassword, confirmNewPassword } = req.body;
         const user = await User.findById(req.session.userId);
 
+        // TEST if user is returned for reset pwd
+        console.log("User found:", user);
+        
         if (!user) {
             return res.redirect('/auth/login');
         }
 
-        const match = bcrypt.compareSync(currentPassword, user.password);
+        // TEST const match for reset pwd
+        const match = await bcrypt.compare(currentPassword, user.password);
+
+        //REAL const match = bcrypt.compareSync(currentPassword, user.password);
         if (!match) {
             return res.render('profile', { user, message: "Current password is incorrect." });
         }
@@ -136,7 +142,16 @@ router.post('/profile/resetPassword', ensureLoggedIn, async (req, res) => {
         // Hash and save new password
         const hashedPassword = bcrypt.hashSync(newPassword, 10);
         user.password = hashedPassword;
-        await user.save();
+        
+        // REAL await user.save();
+        // TEST user.save for reset pwd
+        try {
+            await user.save();
+        } catch (saveErr) {
+            console.error("Save failed:", saveErr);
+            return res.render('profile', { user, message: "Failed to save new password." });
+        }
+        
 
         res.render('profile', { user, message: "Password updated successfully!" });
 
