@@ -86,8 +86,14 @@ router.get('/login', (req, res) => {
 // POST /auth/login - authenticate user
 router.post('/login', async (req, res) => {
     try {
-        const { username, password } = req.body;
-        const user = await User.findOne({ username });
+        const { identifier, password } = req.body;
+        const user = await User.findOne({ 
+            // TEST use username or email at login
+            $or: [
+                { email: identifier.toLowerCase() },
+                { username: identifier.toLowerCase() }
+            ]
+         });
 
         if (user && bcrypt.compareSync(password, user.password)) {
             req.session.userId = user._id;
