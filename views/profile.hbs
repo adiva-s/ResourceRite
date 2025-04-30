@@ -145,7 +145,7 @@
         <div class="section">
             <h2>Edit Profile Info</h2>
             <form action="/profile/edit" method="POST">
-                <input type="text" name="name" placeholder="Name" value="{{#if user.name}}{{user.name}}{{else}}Name not set{{/if}}" required><br>
+                <input type="text" name="name" placeholder="Name" value="{{user.name}}" required><br>
                 <input type="text" name="username" placeholder="Username" value="{{#if user.username}}{{user.username}}{{else}}Username not set{{/if}}" required><br>
                 <input type="email" name="email" placeholder="Email" value="{{#if user.email}}{{user.email}}{{else}}Email not set{{/if}}" required><br>
                 <button type="submit">Save Changes</button>
