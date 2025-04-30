@@ -86,8 +86,14 @@ router.get('/login', (req, res) => {
 // POST /auth/login - authenticate user
 router.post('/login', async (req, res) => {
     try {
-        const { username, password } = req.body;
-        const user = await User.findOne({ username });
+        const { identifier, password } = req.body;
+        const user = await User.findOne({ 
+            // TEST use username or email at login
+            $or: [
+                { email: identifier.toLowerCase() },
+                { username: identifier.toLowerCase() }
+            ]
+         });
 
         if (user && bcrypt.compareSync(password, user.password)) {
             req.session.userId = user._id;
@@ -109,13 +115,15 @@ router.get('/logout', (req, res) => {
 });
 
 // Google OAuth Routes
-router.get('/google', passport.authenticate('google', { scope: ['profile'] }));
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] })); // TEST: added email to the field
 
 router.get('/google/callback', 
     passport.authenticate('google', { failureRedirect: '/auth/login' }), 
     async (req, res) => {
         try {
-            const { id, displayName } = req.user;
+            //TEST for google oauth
+            const { id, displayName, email } = req.user;  // Extract email
+            //REAL: const { id, displayName } = req.user;
             
             // Check if the user already exists
             let user = await User.findOne({ googleId: id });
@@ -125,7 +133,10 @@ router.get('/google/callback',
                 user = await User.create({
                     username: displayName || `user-${id}`, // Fallback to generic username if none exists
                     name: displayName, // Store the display name for Google OAuth users
-                    googleId: id
+                    googleId: id,
+
+                    //TEST google oauth
+                    email: email // Saving the email
                 });
             }
 
@@ -139,11 +150,21 @@ router.get('/google/callback',
     }
 );
 
+/*REAL
 // GET / Show forgot password form
 router.get('/forgot', (req, res) => {
     res.render('forgot', { message: "✅ A password reset link has been sent to your email." });
 });
+*/
+
+// TEST forgot/reset pwd
+// GET /auth/resetPassword - Show reset password form
+router.get('/resetPassword', (req, res) => {
+    res.render('resetPassword');
+});
+
  
+/* REAL
 // POST / Handle password reset request
 router.post('/forgot', async (req, res) => {
     try {
@@ -185,6 +206,47 @@ router.post('/forgot', async (req, res) => {
         res.render('forgot', { message: "⚠️ Something went wrong. Please try again." });
     }
 });
+*/
+
+//TEST reset pwd
+// POST / handle forgot pwd/reset pwd request
+router.post('/resetPassword', async (req, res) => {
+    try {
+      const { email, newPassword, confirmNewPassword } = req.body;
+  
+      // Find user
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.render('resetPassword', { message: "❗ No user found with that email." });
+      }
+  
+      // Passwords match
+      if (newPassword !== confirmNewPassword) {
+        return res.render('resetPassword', { message: "❗ Passwords do not match." });
+      }
+  
+      // Validate strength
+      const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$/;
+      if (!passwordRegex.test(newPassword)) {
+        return res.render('resetPassword', { message: "❗ Password must be at least 8 characters, include a number and a special character." });
+      }
+  
+      // Hash + save new password
+      const hashedPassword = bcrypt.hashSync(newPassword, 10);
+      user.password = hashedPassword;
+      await user.save();
+  
+      res.render('resetPassword', { 
+        message: "✅ Password has been reset successfully! Redirecting to login...",
+        redirectToLogin: true
+      });
+  
+    } catch (err) {
+      console.error("Error in password reset:", err);
+      res.render('resetPassword', { message: "❗ An error occurred. Please try again." });
+    }
+});
+  
 
 // GET /auth/reset/:token
 router.get('/reset/:token', async (req, res) => {

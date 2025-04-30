@@ -70,6 +70,21 @@
             border: 1px solid #ccc;
             border-radius: 5px;
         }
+        
+        .delete-btn {
+            background-color: #e53935;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            margin-top: 15px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .delete-btn:hover {
+            background-color: #c62828;
+        }
+
     </style>
 </head>
 <body>
@@ -145,9 +160,9 @@
         <div class="section">
             <h2>Edit Profile Info</h2>
             <form action="/profile/edit" method="POST">
-                <input type="text" name="name" placeholder="Name" value="{{#if user.name}}{{user.name}}{{else}}Name not set{{/if}}" required><br>
-                <input type="text" name="username" placeholder="Username" value="{{#if user.username}}{{user.username}}{{else}}Username not set{{/if}}" required><br>
-                <input type="email" name="email" placeholder="Email" value="{{#if user.email}}{{user.email}}{{else}}Email not set{{/if}}" required><br>
+                <input type="text" name="username" placeholder="Username" value="{{user.username}}" required><br>
+                <input type="text" name="name" placeholder="Name" value="{{user.name}}" required><br>
+                <input type="email" name="email" placeholder="Email" value="{{user.email}}" required><br>
                 <button type="submit">Save Changes</button>
             </form>
         </div>
@@ -163,6 +178,19 @@
             </form>
         </div>
 
+        <!--TEST acc delete option -->
+        <div class = "section">
+            <h2>Delete Account</h2>
+            <form action="/profile/deleteAccount" method="POST" onsubmit="return confirmDelete()">
+                <button type="submit" class="delete-btn">Delete My Account</button>
+            </form>
+
+            <script>
+                function confirmDelete() {
+                    return confirm("⚠️ Are you sure you want to delete your account? This action cannot be undone.");
+                }
+            </script>
+        </div>  
 
     </div>
 </body>

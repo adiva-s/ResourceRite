@@ -4,6 +4,10 @@ import express from 'express';
 import ensureLoggedIn from '../middleware/auth.mjs';
 import User from '../models/User.mjs';
 
+// TEST bcrypt import for reset pwd
+import bcrypt from 'bcryptjs';
+
+
 const router = express.Router();
 
 // GET /user/profile - display logged-in user's profile
@@ -114,6 +118,9 @@ router.post('/profile/resetPassword', ensureLoggedIn, async (req, res) => {
         const { currentPassword, newPassword, confirmNewPassword } = req.body;
         const user = await User.findById(req.session.userId);
 
+        // TEST if user is returned for reset pwd
+        console.log("User found:", user);
+        
         if (!user) {
             return res.redirect('/auth/login');
         }
@@ -136,13 +143,38 @@ router.post('/profile/resetPassword', ensureLoggedIn, async (req, res) => {
         // Hash and save new password
         const hashedPassword = bcrypt.hashSync(newPassword, 10);
         user.password = hashedPassword;
-        await user.save();
+
+        // REAL await user.save();
+        // TEST user.save for reset pwd
+        try {
+            await user.save();
+        } catch (saveErr) {
+            console.error("Save failed:", saveErr);
+            return res.render('profile', { user, message: "Failed to save new password." });
+        }
+        
 
         res.render('profile', { user, message: "Password updated successfully!" });
 
     } catch (err) {
         console.error("Error resetting password:", err);
         res.status(500).send('Error resetting password.');
+    }
+});
+
+// TEST acc delete
+// POST /profile/deleteAccount - delete user's account
+router.post('/profile/deleteAccount', ensureLoggedIn, async (req, res) => {
+    try {
+        const userId = req.session.userId;
+
+        await User.findByIdAndDelete(userId);
+        req.session.destroy(); // Clear the session
+
+        res.render('goodbye', { message: "Your account has been successfully deleted." });
+    } catch (err) {
+        console.error("Error deleting account:", err);
+        res.status(500).send("Something went wrong while deleting your account.");
     }
 });
 
