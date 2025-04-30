@@ -1,0 +1,43 @@
+<h1>Open Reports</h1>
+{{#if openReports.length}}
+  <ul>
+  {{#each openReports}}
+    <li>
+      <strong>{{this.product.name}}</strong> reported by {{this.reporter.username}}
+      <!-- Link to detail so admin can add a comment if desired -->
+      <a href="/admin/reports/{{this._id}}">Review</a>
+      <!-- Quick actions -->
+      <form action="/admin/reports/{{this._id}}/resolve" method="POST" style="display:inline">
+        <input type="hidden" name="action" value="remove">
+        <button type="submit">Remove</button>
+      </form>
+      <form action="/admin/reports/{{this._id}}/resolve" method="POST" style="display:inline">
+        <input type="hidden" name="action" value="keep">
+        <button type="submit">Unhide</button>
+      </form>
+    </li>
+  {{/each}}
+  </ul>
+{{else}}
+  <p>No open reports.</p>
+{{/if}}
+
+<hr>
+
+<h1>Resolved Reports</h1>
+{{#if closedReports.length}}
+  <ul>
+  {{#each closedReports}}
+    <li>
+      <strong>{{this.product.name}}</strong> reported by {{this.reporter.username}} (resolved)
+      <!-- Only unhide action for resolved items -->
+      <form action="/admin/reports/{{this._id}}/resolve" method="POST" style="display:inline">
+        <input type="hidden" name="action" value="unhide">
+        <button type="submit">Unhide</button>
+      </form>
+    </li>
+  {{/each}}
+  </ul>
+{{else}}
+  <p>No resolved reports.</p>
+{{/if}}

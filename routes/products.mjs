@@ -5,6 +5,7 @@ import express from 'express';
 import User from '../models/User.mjs';
 import Product from '../models/Product.mjs';
 import ensureLoggedIn from '../middleware/auth.mjs';
+import Report from '../models/Report.mjs';
 import Stripe from 'stripe';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
@@ -21,17 +22,24 @@ router.use((req, res, next) => {
     next();
 });
 
-
 // GET / - Home page showing product listings
 router.get('/', async (req, res) => {
     try {
-        const products = await Product.find();
-        res.render('index', { products });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Error loading products.');
+      const filter = { isActive: true };
+      if (req.session.userId) {
+        const reportedIds = await Report
+          .find({ reporter: req.session.userId, status: 'open' })
+          .distinct('product');
+        filter._id = { $nin: reportedIds };
+      }
+      const products = await Product.find(filter).lean();
+      res.render('index', { products });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Server error.');
     }
-});
+  });
+  
 
 
 //  Show individual product details
@@ -324,6 +332,24 @@ router.post('/cart/clear', ensureLoggedIn, (req, res) => {
     req.session.cart = {};  // Clear the entire cart
     res.redirect('/cart');
 });
+
+router.post('/products/:id/report', ensureLoggedIn, async (req, res) => {
+    const { reason } = req.body;
+    const existing = await Report.findOne({
+        reporter: req.session.userId,
+        product: req.params.id,
+        status: 'open'
+    });
+    if (!existing) {
+        await Report.create({
+            reporter: req.session.userId,
+            product: req.params.id,
+            reason
+            });
+    }
+    // send them to home, and they’ll no longer see that listing
+    res.redirect('/');
+  });
 
 // GET / profile
 router.get('/profile', ensureLoggedIn, async (req, res) => {

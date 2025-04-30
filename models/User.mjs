@@ -28,6 +28,7 @@ const userSchema = new mongoose.Schema({
             deliveryStatus: { type: String, default: 'Processing' } 
         }
     ],
+    isAdmin: { type: Boolean, default: false },
     resetPasswordToken: String, 
     resetPasswordExpires: Date 
 });

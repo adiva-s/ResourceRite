@@ -15,6 +15,7 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import User from './models/User.mjs';
 import Stripe from 'stripe';
 
+
 // Initialize Stripe with secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -101,7 +102,7 @@ import authRoutes from './routes/auth.mjs';
 import productRoutes from './routes/products.mjs';
 import profileRoutes from './routes/profile.mjs';
 import paymentRoutes from './routes/payment.mjs';
-
+import adminRoutes from './routes/admin.mjs';
 
 // Use routes
 app.use('/', productRoutes);
@@ -110,6 +111,7 @@ app.use('/user', profileRoutes);
 // app.use('/products', productRoutes);
 app.use('/payment', paymentRoutes);
 app.use('/', profileRoutes);
+app.use('/', adminRoutes);    // <<-- so GET /admin/reports works
 
 //Testing redirect to login from signup
 app.get('/login', ensureAuthenticated, (req, res) => {

@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-
 const { Schema } = mongoose;
 
 const reviewSchema = new Schema({
@@ -16,7 +15,8 @@ const productSchema = new Schema({
     imageUrl: String,
     category: String,
     seller: { type: Schema.Types.ObjectId, ref: 'User' },
-    reviews: [reviewSchema]
+    reviews: [reviewSchema],
+    isActive: { type: Boolean, default: true }
 });
 
 productSchema.index({ name: 'text', description: 'text' });

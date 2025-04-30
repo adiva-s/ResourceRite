@@ -1,0 +1,15 @@
+<h2>Report #{{report._id}}</h2>
+<p><strong>Product:</strong> {{report.product.name}}</p>
+<p><strong>Reporter:</strong> {{report.reporter.username}} ({{report.reporter.email}})</p>
+<p><strong>Reason:</strong> {{report.reason}}</p>
+<form action="/admin/reports/{{report._id}}/resolve" method="POST">
+  <div>
+    <textarea name="adminComment" placeholder="Add resolution note…">{{report.adminComment}}</textarea>
+  </div>
+  <div>
+    {{#if (eq report.status 'open')}}
+      <button type="submit" name="action" value="remove">Remove Listing</button>
+    {{/if}}
+    <button type="submit" name="action" value="keep">Unhide Listing</button>
+  </div>
+</form>
