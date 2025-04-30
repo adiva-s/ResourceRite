@@ -109,13 +109,15 @@ router.get('/logout', (req, res) => {
 });
 
 // Google OAuth Routes
-router.get('/google', passport.authenticate('google', { scope: ['profile'] }));
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] })); // TEST: added email to the field
 
 router.get('/google/callback', 
     passport.authenticate('google', { failureRedirect: '/auth/login' }), 
     async (req, res) => {
         try {
-            const { id, displayName } = req.user;
+            //TEST for google oauth
+            const { id, displayName, email } = req.user;  // Extract email
+            //REAL: const { id, displayName } = req.user;
             
             // Check if the user already exists
             let user = await User.findOne({ googleId: id });
@@ -125,7 +127,10 @@ router.get('/google/callback',
                 user = await User.create({
                     username: displayName || `user-${id}`, // Fallback to generic username if none exists
                     name: displayName, // Store the display name for Google OAuth users
-                    googleId: id
+                    googleId: id,
+
+                    //TEST google oauth
+                    email: email // Saving the email
                 });
             }
 
