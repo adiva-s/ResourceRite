@@ -13,7 +13,7 @@
 <header>
 <h1>ResourceRite</h1>
 {{#if currentUser}}
-<p>Welcome, {{currentUser.username}} (Role: {{currentUser.role}}) | <a href="/auth/logout">Logout</a></p>
+<p>Welcome, {{currentUser.username}} | <a href="/auth/logout">Logout</a></p>
 {{else}}
 <a href="/auth/login">Login</a> | <a href="/auth/signup">Sign Up</a>
 {{/if}}
