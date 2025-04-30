@@ -150,10 +150,19 @@ router.get('/google/callback',
     }
 );
 
+/*REAL
 // GET / Show forgot password form
 router.get('/forgot', (req, res) => {
     res.render('forgot', { message: "✅ A password reset link has been sent to your email." });
 });
+*/
+
+// TEST forgot/reset pwd
+// GET /auth/resetPassword - Show reset password form
+router.get('/resetPassword', (req, res) => {
+    res.render('resetPassword');
+});
+
  
 /* REAL
 // POST / Handle password reset request
