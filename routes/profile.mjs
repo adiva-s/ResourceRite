@@ -162,6 +162,22 @@ router.post('/profile/resetPassword', ensureLoggedIn, async (req, res) => {
     }
 });
 
+// TEST acc delete
+// POST /profile/deleteAccount - delete user's account
+router.post('/profile/deleteAccount', ensureLoggedIn, async (req, res) => {
+    try {
+        const userId = req.session.userId;
+
+        await User.findByIdAndDelete(userId);
+        req.session.destroy(); // Clear the session
+
+        res.render('goodbye', { message: "Your account has been successfully deleted." });
+    } catch (err) {
+        console.error("Error deleting account:", err);
+        res.status(500).send("Something went wrong while deleting your account.");
+    }
+});
+
 
 
 
