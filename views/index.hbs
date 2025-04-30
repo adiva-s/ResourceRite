@@ -82,7 +82,7 @@
             <p>
                 Welcome, 
                 <a href="/user/profile" style="color: white; text-decoration: none;">
-                    {{currentUser.username}} (Role: {{currentUser.role}})
+                    {{currentUser.username}}
                 </a> | 
                 <a href="/auth/logout" style="color: white;">Logout</a>
             </p>
@@ -92,6 +92,7 @@
         {{/if}}
     </header>
 
+    <!-- (Role: {{currentUser.role}}) -->
 
     <div style="text-align: right; margin: 10px;">
         <a href="/cart">
