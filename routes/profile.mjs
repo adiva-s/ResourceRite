@@ -4,6 +4,10 @@ import express from 'express';
 import ensureLoggedIn from '../middleware/auth.mjs';
 import User from '../models/User.mjs';
 
+// TEST bcrypt import for reset pwd
+import bcrypt from 'bcryptjs';
+
+
 const router = express.Router();
 
 // GET /user/profile - display logged-in user's profile
@@ -121,10 +125,7 @@ router.post('/profile/resetPassword', ensureLoggedIn, async (req, res) => {
             return res.redirect('/auth/login');
         }
 
-        // TEST const match for reset pwd
-        const match = await bcrypt.compare(currentPassword, user.password);
-
-        //REAL const match = bcrypt.compareSync(currentPassword, user.password);
+        const match = bcrypt.compareSync(currentPassword, user.password);
         if (!match) {
             return res.render('profile', { user, message: "Current password is incorrect." });
         }
@@ -142,7 +143,7 @@ router.post('/profile/resetPassword', ensureLoggedIn, async (req, res) => {
         // Hash and save new password
         const hashedPassword = bcrypt.hashSync(newPassword, 10);
         user.password = hashedPassword;
-        
+
         // REAL await user.save();
         // TEST user.save for reset pwd
         try {
