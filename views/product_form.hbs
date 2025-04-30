@@ -1,0 +1,32 @@
+<h2>{{#if product._id}}Edit{{else}}New{{/if}} Listing</h2>
+
+<form action="{{action}}" method="{{method}}">
+  <div class="form-group">
+    <label for="name">Title</label>
+    <input name="name" id="name" class="form-control" required
+           value="{{product.name}}">
+  </div>
+  <div class="form-group">
+    <label for="description">Description</label>
+    <textarea name="description" id="description" class="form-control">{{product.description}}</textarea>
+  </div>
+  <div class="form-group">
+    <label for="category">Category</label>
+    <input name="category" id="category" class="form-control" required
+           value="{{product.category}}">
+  </div>
+  <div class="form-group">
+    <label for="price">Price</label>
+    <input name="price" id="price" type="number" step="0.01" class="form-control" required
+           value="{{product.price}}">
+  </div>
+  <div class="form-group">
+    <label for="imageUrl">Image URL</label>
+    <input name="imageUrl" id="imageUrl" class="form-control"
+           value="{{product.imageUrl}}">
+  </div>
+  <button type="submit" class="btn btn-primary mt-2">
+    {{#if product._id}}Update{{else}}Create{{/if}}
+  </button>
+  <a href="/seller/products" class="btn btn-secondary mt-2">Cancel</a>
+</form>

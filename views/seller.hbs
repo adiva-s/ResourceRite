@@ -1,0 +1,32 @@
+{{#if message}}
+  <div class="alert alert-success">{{message}}</div>
+{{/if}}
+
+<h2>My Listings</h2>
+<a href="/seller/products/new" class="btn btn-primary">New Listing</a>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th><th>Price</th><th>Created</th><th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each products}}
+    <tr>
+      <td>{{this.name}}</td>
+      <td>${{this.price}}</td>
+      <td>{{this.createdAt}}</td>
+      <td>
+        <a href="/seller/products/{{this._id}}/edit" class="btn btn-sm btn-secondary">Edit</a>
+        <form method="POST" action="/seller/products/{{this._id}}?_method=DELETE" style="display:inline">
+          <button class="btn btn-sm btn-danger" onclick="return confirm('Delete?')">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {{/each}}
+    {{#unless products.length}}
+      <tr><td colspan="4">You have no listings yet.</td></tr>
+    {{/unless}}
+  </tbody>
+</table>

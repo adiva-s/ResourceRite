@@ -46,7 +46,11 @@ router.get('/', async (req, res) => {
 router.get('/products/:id', async (req, res) => {
     try {
         // Find the product and populate the 'seller' field (if it exists in your model)
-        const product = await Product.findById(req.params.id).populate('seller'); 
+        const product = await Product
+            .findById(req.params.id)
+            .populate('seller')
+            .populate({ path: 'reviews.user', select: 'username' })
+            .exec();
 
         if (!product) return res.status(404).send('Product not found');
 
@@ -58,7 +62,7 @@ router.get('/products/:id', async (req, res) => {
         delete req.session.message; // Clear the message after retrieving it
 
         // Render the 'product' view with the product, user, and message data
-        res.render('product', { product, currentUser, message });
+        res.render('product', { product, currentUser, message, ratings: [1,2,3,4,5] });
     } catch (error) {
         console.error(error);
         res.status(500).send('Error loading product.');
@@ -332,6 +336,19 @@ router.post('/cart/clear', ensureLoggedIn, (req, res) => {
     req.session.cart = {};  // Clear the entire cart
     res.redirect('/cart');
 });
+
+router.post('/products/:id/review', ensureLoggedIn, async (req, res) => {
+    const { rating, comment } = req.body;
+    const product = await Product.findById(req.params.id);
+    product.reviews.push({
+        user: req.session.userId,
+        rating: Number(rating),
+        comment
+    });
+    await product.save();
+    res.redirect(`/products/${req.params.id}`);
+});
+  
 
 router.post('/products/:id/report', ensureLoggedIn, async (req, res) => {
     const { reason } = req.body;

@@ -2,11 +2,11 @@ import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 const reviewSchema = new Schema({
-    user: { type: Schema.Types.ObjectId, ref: 'User' },
-    rating: { type: Number, min: 1, max: 5 },
+    user:   { type: Schema.Types.ObjectId, ref: 'User', required: true},
+    rating: { type: Number, min: 1, max: 5, required: true },
     comment: String,
-    date: { type: Date, default: Date.now }
-});
+    date:   { type: Date, default: Date.now }
+}, { timestamps: true }); // adds review.createdAt and review.updatedAt
 
 const productSchema = new Schema({
     name: { type: String, required: true },
@@ -14,10 +14,10 @@ const productSchema = new Schema({
     price: { type: Number, required: true },
     imageUrl: String,
     category: String,
-    seller: { type: Schema.Types.ObjectId, ref: 'User' },
+    seller: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     reviews: [reviewSchema],
     isActive: { type: Boolean, default: true }
-});
+}, {timestamps: true});
 
 productSchema.index({ name: 'text', description: 'text' });
 

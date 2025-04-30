@@ -115,9 +115,9 @@
             <form method="POST" action="/products/{{product._id}}/review">
                 <label for="rating">Rating:</label>
                 <select name="rating" id="rating">
-                    {{#each [1,2,3,4,5]}}
+                  {{#each ratings}}
                     <option value="{{this}}">{{this}}</option>
-                    {{/each}}
+                  {{/each}}
                 </select><br/><br/>
                 <label for="comment">Comment:</label><br/>
                 <textarea name="comment" rows="3" cols="40"></textarea><br/><br/>
