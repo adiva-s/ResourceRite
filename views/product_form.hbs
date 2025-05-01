@@ -125,9 +125,9 @@
       color: white;
     }
 
-    .btn-back {
+    .back-btn {
       margin-top: 20px;
-      display: inline-block;
+      margin-bottom: 20px;
     }
 
     .btn-back button {
@@ -147,12 +147,14 @@
   </style>
 </head>
 <body>
-  <div class="btn-back">
-    <a href="/" style="text-decoration: none;">
-      <button>Back to Marketplace</button>
-    </a>
-  </div>
   <div class="container">
+    
+    <div class="btn-back">
+      <a href="/" style="text-decoration: none;">
+        <button>Back to Marketplace</button>
+      </a>
+    </div>
+
     <h2>{{#if product._id}}Edit{{else}}New{{/if}} Listing</h2>
 
     <div class="form-section">
