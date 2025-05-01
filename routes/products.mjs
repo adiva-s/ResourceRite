@@ -23,6 +23,7 @@ router.use((req, res, next) => {
 });
 
 // GET / - Home page showing product listings
+/* REAL
 router.get('/', async (req, res) => {
     try {
       const filter = { isActive: true };
@@ -39,7 +40,49 @@ router.get('/', async (req, res) => {
       res.status(500).send('Server error.');
     }
   });
+  */
+
+// TEST
+// GET / - Home page showing product listings and filters
+router.get('/', async (req, res) => {
+    try {
+      const { category, minPrice, maxPrice, keyword } = req.query;
   
+      const filter = { isActive: true };
+  
+      if (req.session.userId) {
+        const reportedIds = await Report
+          .find({ reporter: req.session.userId, status: 'open' })
+          .distinct('product');
+        filter._id = { $nin: reportedIds };
+      }
+  
+      // Apply category filter
+      if (category && category !== 'All') {
+        filter.category = category;
+      }
+  
+      // Apply price filter
+      if (minPrice || maxPrice) {
+        filter.price = {};
+        if (minPrice) filter.price.$gte = parseFloat(minPrice);
+        if (maxPrice) filter.price.$lte = parseFloat(maxPrice);
+      }
+  
+      // Apply keyword filter
+      if (keyword) {
+        filter.name = { $regex: keyword, $options: 'i' };
+      }
+  
+      const products = await Product.find(filter).lean();
+      res.render('index', { products });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Server error.');
+    }
+});
+  
+
 
 
 //  Show individual product details
