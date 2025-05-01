@@ -88,7 +88,7 @@
                 </thead>
                 <tbody id="cart-items">
                     {{#each products}}
-                    <tr data-product-id="{{this.id}}">
+                    <tr data-product-id="{{this.id}}" data-stock="{{this.stock}}">
                         <td>{{this.name}}</td>
                         <td>${{this.price}}</td>
                         <td>
@@ -142,6 +142,7 @@
         }
     }
 
+    /* REAL
     document.querySelectorAll('.increase-btn').forEach(button => {
         button.addEventListener('click', (e) => {
             e.preventDefault();
@@ -157,6 +158,39 @@
             updateCart(productId, 'decrease');
         });
     });
+    */
+
+    // TEST increase and decrease button
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(".increase-btn").forEach(button => {
+            button.addEventListener("click", () => {
+                const row = button.closest("tr");
+                const quantitySpan = row.querySelector(".quantity");
+                const currentQuantity = parseInt(quantitySpan.textContent);
+                const stock = parseInt(row.getAttribute("data-stock"));
+
+                if (currentQuantity < stock) {
+                    quantitySpan.textContent = currentQuantity + 1;
+                } else {
+                    alert("⚠️ Sorry, only " + stock + " left in stock.");
+                }
+            });
+        });
+
+        document.querySelectorAll(".decrease-btn").forEach(button => {
+            button.addEventListener("click", () => {
+                const row = button.closest("tr");
+                const quantitySpan = row.querySelector(".quantity");
+                const currentQuantity = parseInt(quantitySpan.textContent);
+
+                if (currentQuantity > 1) {
+                    quantitySpan.textContent = currentQuantity - 1;
+                }
+            });
+        });
+    });
+
+
 
     document.querySelectorAll('.delete-btn').forEach(button => {
         button.addEventListener('click', (e) => {
