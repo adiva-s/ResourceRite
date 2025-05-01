@@ -125,6 +125,7 @@
         <div class="product-list">
             {{#each products}}
             <div class="product-item">
+                <h2>{{this.name}}</h2>
                 <img src="{{this.imageUrl}}" alt="{{this.name}}">
                 <h3><a href="/products/{{this._id}}">{{this.name}}</a></h3>
                 <p>Price: ${{this.price}}</p>
