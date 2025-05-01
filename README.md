@@ -50,7 +50,12 @@ You’ll need to generate:
 Stripe Secret Key → from https://dashboard.stripe.com/test/apikeys
 Google OAuth Client ID/Secret → from Google Cloud Console (enable OAuth, authorized redirect http://localhost:3000/auth/google/callback)
 
-5. Start the App
+5. Install Stripe/Google Dependencies (in case needed_
+```bash
+npm install stripe passport-google-oauth20
+```
+
+6. . Start the App
 ``` bash
 node app.mjs
 ```
