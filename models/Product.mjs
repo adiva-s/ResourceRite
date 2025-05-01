@@ -9,12 +9,18 @@ const reviewSchema = new Schema({
 }, { timestamps: true }); // adds review.createdAt and review.updatedAt
 
 const productSchema = new Schema({
+    seller: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+        index: true,
+    },
     name: { type: String, required: true },
     description: String,
-    price: { type: Number, required: true },
+    price: { type: Number, required: true, min: 0 },
+    stock: { type: Number,  required: true, min: 0 },
     imageUrl: String,
     category: String,
-    seller: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     reviews: [reviewSchema],
     isActive: { type: Boolean, default: true }
 }, {timestamps: true});

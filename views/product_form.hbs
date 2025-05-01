@@ -21,6 +21,11 @@
            value="{{product.price}}">
   </div>
   <div class="form-group">
+    <label for="stock">Stock</label>
+    <input name="stock" id="stock" type="number" step="1" class="form-control" required
+           value="{{product.stock}}">
+  </div>
+  <div class="form-group">
     <label for="imageUrl">Image URL</label>
     <input name="imageUrl" id="imageUrl" class="form-control"
            value="{{product.imageUrl}}">
@@ -30,3 +35,7 @@
   </button>
   <a href="/seller/products" class="btn btn-secondary mt-2">Cancel</a>
 </form>
+<br>
+<a href="/" style="text-decoration: none;">
+  <button>Back to Marketplace</button>
+</a>

@@ -5,6 +5,7 @@ dotenv.config();
 // Imports
 import express from 'express';
 import session from 'express-session';
+import methodOverride from 'method-override';
 import mongoose from 'mongoose';
 import path from 'path';
 import MongoStore from 'connect-mongo';
@@ -51,6 +52,8 @@ app.use(session({
 // Initialize Passport for authentication
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(methodOverride('_method'));
 
 // Middleware to make current user available in templates (Integrated solution)
 app.use(async (req, res, next) => {
@@ -103,6 +106,7 @@ import productRoutes from './routes/products.mjs';
 import profileRoutes from './routes/profile.mjs';
 import paymentRoutes from './routes/payment.mjs';
 import adminRoutes from './routes/admin.mjs';
+import sellerRoutes from './routes/seller.mjs';
 
 // Use routes
 app.use('/', productRoutes);
@@ -112,6 +116,7 @@ app.use('/user', profileRoutes);
 app.use('/payment', paymentRoutes);
 app.use('/', profileRoutes);
 app.use('/', adminRoutes);    // <<-- so GET /admin/reports works
+app.use('/', sellerRoutes);
 
 //Testing redirect to login from signup
 app.get('/login', ensureAuthenticated, (req, res) => {
