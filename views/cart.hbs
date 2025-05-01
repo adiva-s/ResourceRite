@@ -107,8 +107,8 @@
             </table>
 
             <div style="text-align: left margin-top: 20px;">
-                <p>Subtotal: ${{subtotal}}</p>
-                <p>Tax (7%): ${{tax}}</p>
+                <p>Subtotal: $<span id="subtotal">{{subtotal}}</span></p>
+                <p>Tax (7%): $<span id="tax">{{tax}}</span></p>
                 <h2>Total: $<span id="total-price">{{totalPrice}}</span></h2>
             </div>
 
@@ -132,11 +132,28 @@
             if (data.quantity !== undefined) {
                 document.querySelector(`[data-product-id="${productId}"] .quantity`).textContent = data.quantity;
             }
+            // TEST
+            if (data.totalPrice !== undefined) {
+                document.getElementById("total-price").textContent = data.totalPrice;
+            }
 
-            document.getElementById("total-price").textContent = data.totalPrice;
+            if (data.subtotal !== undefined) {
+                document.getElementById("subtotal").textContent = data.subtotal;
+            }
+
+            if (data.tax !== undefined) {
+                document.getElementById("tax").textContent = data.tax;
+            }
+
+            // REAL document.getElementById("total-price").textContent = data.totalPrice;
 
             if (data.quantity === 0) {
                 document.querySelector(`[data-product-id="${productId}"]`).remove();
+            }
+
+            // TEST
+            if (document.querySelectorAll('#cart-items tr').length === 0) {
+                location.reload();
             }
         }
     }
@@ -158,15 +175,16 @@
                 updateCart(productId, 'decrease');
             });
         });
-    });
-
-    document.querySelectorAll('.delete-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
-            e.preventDefault();
-            const productId = e.target.closest('tr').dataset.productId;
-            updateCart(productId, 'remove');
+    
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const productId = e.target.closest('tr').dataset.productId;
+                updateCart(productId, 'remove');
+            });
         });
     });
+
 </script>
 
 
