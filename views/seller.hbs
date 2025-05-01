@@ -1,3 +1,4 @@
+{{!--REAL 
 {{#if message}}
   <div class="alert alert-success">{{message}}</div>
 {{/if}}
@@ -36,3 +37,175 @@
 <a href="/" style="text-decoration: none;">
   <button>Back to Marketplace</button>
 </a>
+--}}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Listings</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1000px;
+      margin: 40px auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      font-size: 2em;
+      margin: 0;
+    }
+
+    .btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background-color: #2a6fd7;
+      color: white;
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .btn-danger {
+      background-color: #e53935;
+      color: white;
+    }
+
+    .alert {
+      background-color: #d4edda;
+      color: #155724;
+      padding: 10px 20px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+
+    .listing-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.08);
+      padding: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .listing-info {
+      flex: 1;
+    }
+
+    .listing-info h3 {
+      margin: 0 0 5px;
+      font-size: 1.2em;
+    }
+
+    .listing-info p {
+      margin: 3px 0;
+      color: #555;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .no-listings {
+      text-align: center;
+      font-size: 1.1em;
+      color: #666;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+
+    .back-btn {
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .back-btn button {
+      background-color: #2a6fd7;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    form {
+      display: inline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    {{#if message}}
+      <div class="alert">{{message}}</div>
+    {{/if}}
+
+    <header>
+      <h2>My Listings</h2>
+      <a href="/seller/products/new" class="btn btn-primary">+ New Listing</a>
+    </header>
+
+    {{#each products}}
+      <div class="listing-card">
+        <div class="listing-info">
+          <h3>{{this.name}}</h3>
+          <p>Price: ${{this.price}}</p>
+          <p>Created on: {{this.createdAt}}</p>
+        </div>
+        <div class="actions">
+          <a href="/seller/products/{{this._id}}/edit" class="btn btn-secondary">Edit</a>
+          <form method="POST" action="/seller/products/{{this._id}}?_method=DELETE">
+            <button class="btn btn-danger" onclick="return confirm('Delete this listing?')">Delete</button>
+          </form>
+        </div>
+      </div>
+    {{/each}}
+
+    {{#unless products.length}}
+      <div class="no-listings">You have no listings yet.</div>
+    {{/unless}}
+
+    <div class="back-btn">
+      <a href="/">
+        <button>Back to Marketplace</button>
+      </a>
+    </div>
+
+  </div>
+</body>
+</html>
