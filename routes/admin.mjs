@@ -61,4 +61,29 @@ router.post('/admin/reports/:id/resolve', ensureLoggedIn, ensureAdmin, async (re
     }
   );
 
+  // GET /admin/products/new - show add product form
+  router.get('/admin/products/new', ensureLoggedIn, ensureAdmin, (req, res) => {
+    res.render('admin/addProduct');  // this renders views/admin/addProduct.hbs
+  });
+
+
+  // POST /admin/products/new
+  router.post('/admin/products/new', ensureLoggedIn, ensureAdmin, async (req, res) => {
+    const { name, description, price, stock } = req.body;
+    const priceCap = 50;  // set your price cap here!
+
+    if (price > priceCap) {
+        return res.render('admin/addProduct', { message: `❗ Price cannot exceed $${priceCap}.` });
+    }
+
+    try {
+        await Product.create({ name, description, price, stock, isActive: true });
+        res.redirect('/admin/products');  // or wherever you want to go after adding
+    } catch (err) {
+        console.error(err);
+        res.render('admin/addProduct', { message: '❗ Error adding product.' });
+    }
+  });
+
+
 export default router;

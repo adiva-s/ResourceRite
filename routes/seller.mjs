@@ -18,6 +18,17 @@ router.get('/seller/products/new', ensureLoggedIn, (req, res) => {
 // 3.3 Handle creation
 router.post('/seller/products', ensureLoggedIn, async (req, res) => {
   const { name, description, category, price, stock, imageUrl } = req.body;
+  const MAX_PRICE = 50;
+
+  if (price > MAX_PRICE) {
+    return res.render('product_form', {
+      product: req.body,
+      action: '/seller/products',
+      method: 'POST',
+      error: `❗ Price exceeds maximum allowed price of $${MAX_PRICE}`
+    });    
+  }
+
   await Product.create({
     name,
     description,
@@ -27,9 +38,11 @@ router.post('/seller/products', ensureLoggedIn, async (req, res) => {
     imageUrl,
     seller: req.session.userId
   });
+
   req.session.message = 'Product created';
   res.redirect('/seller/products');
 });
+
 
 // 3.4 Show form to edit an existing product
 router.get(

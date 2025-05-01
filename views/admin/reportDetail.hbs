@@ -1,15 +1,82 @@
-<h2>Report #{{report._id}}</h2>
-<p><strong>Product:</strong> {{report.product.name}}</p>
-<p><strong>Reporter:</strong> {{report.reporter.username}} ({{report.reporter.email}})</p>
-<p><strong>Reason:</strong> {{report.reason}}</p>
-<form action="/admin/reports/{{report._id}}/resolve" method="POST">
-  <div>
-    <textarea name="adminComment" placeholder="Add resolution note…">{{report.adminComment}}</textarea>
-  </div>
-  <div>
-    {{#if (eq report.status 'open')}}
-      <button type="submit" name="action" value="remove">Remove Listing</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add New Product</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .form-container {
+      background: white;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 25px;
+      font-size: 26px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 12px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+    textarea {
+      resize: vertical;
+      height: 80px;
+    }
+    button {
+      background-color: #2a6fd7;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+    }
+    .message {
+      color: red;
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+    a {
+      display: inline-block;
+      margin-top: 15px;
+      font-size: 14px;
+      color: #2a6fd7;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h1>Add New Product</h1>
+    {{#if message}}
+      <div class="message">{{message}}</div>
     {{/if}}
-    <button type="submit" name="action" value="keep">Unhide Listing</button>
+    <form action="/admin/products/new" method="POST">
+      <input type="text" name="name" placeholder="Product Name" required>
+      <textarea name="description" placeholder="Description" required></textarea>
+      <input type="number" name="price" placeholder="Price (USD)" min="0" required>
+      <input type="number" name="stock" placeholder="Stock Quantity" min="0" required>
+      <button type="submit">Add Product</button>
+    </form>
+    <a href="/admin/products">← Back to Admin Products</a>
   </div>
-</form>
+</body>
+</html>

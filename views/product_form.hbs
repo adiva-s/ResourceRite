@@ -158,6 +158,10 @@
     <h2>{{#if product._id}}Edit{{else}}New{{/if}} Listing</h2>
 
     <div class="form-section">
+      {{#if error}}
+        <div style="color: red; margin-bottom: 10px;">{{error}}</div>
+      {{/if}}
+
       <form action="{{action}}" method="{{method}}">
         <div>
           <label for="name">Title</label>

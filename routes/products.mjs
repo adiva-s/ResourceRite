@@ -449,7 +449,7 @@ router.get('/profile', ensureLoggedIn, async (req, res) => {
             .populate('savedItems')
             .populate('purchases.productId');
 
-        console.log("👉 Purchase History on profile load:", user.purchases);
+        console.log("Purchase History on profile load:", user.purchases);
 
         res.render('profile', {
             user: {
@@ -470,6 +470,35 @@ router.get('/profile', ensureLoggedIn, async (req, res) => {
         res.status(500).send("Unable to load profile.");
     }
 });
+
+// POST /products/new - Create a new product
+router.post('/products/new', ensureLoggedIn, async (req, res) => {
+    try {
+        const { name, description, category, price, stock, image } = req.body;
+
+        if (price > 50) {
+            return res.render('addProduct', { message: "❌ Price cannot exceed $50." });
+        }
+
+        const product = new Product({
+            name,
+            description,
+            category,
+            price,
+            stock,
+            image,
+            seller: req.session.userId,
+            isActive: true
+        });
+
+        await product.save();
+        res.redirect('/');
+    } catch (err) {
+        console.error("Error creating product:", err);
+        res.status(500).send("❌ Error creating product.");
+    }
+});
+
 
 
 export default router;
