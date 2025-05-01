@@ -321,6 +321,7 @@ router.post('/products/:id/add-to-cart', ensureLoggedIn, async (req, res) => {
     }
 });
 
+/* REAL
 // Increase Quantity
 router.post('/cart/:id/increase', ensureLoggedIn, (req, res) => {
     const productId = req.params.id;
@@ -332,7 +333,35 @@ router.post('/cart/:id/increase', ensureLoggedIn, (req, res) => {
     const totalPrice = calculateTotalPrice(req.session.cart);
     res.json({ quantity: req.session.cart[productId].quantity, totalPrice });
 });
+*/
 
+// TEST inc quantity
+// Increase Quantity
+router.post('/cart/:id/increase', ensureLoggedIn, async (req, res) => {
+    const productId = req.params.id;
+
+    if (req.session.cart && req.session.cart[productId]) {
+        // Find the product in the database to check the stock
+        const product = await Product.findById(productId);
+
+        if (!product) {
+            return res.status(404).send('Product not found');
+        }
+
+        // Check if there's enough stock
+        const currentQuantity = req.session.cart[productId].quantity;
+        if (currentQuantity < product.stock) {
+            req.session.cart[productId].quantity += 1;
+        } else {
+            return res.status(400).send('Cannot increase quantity. Not enough stock.');
+        }
+    }
+
+    const totalPrice = calculateTotalPrice(req.session.cart);
+    res.json({ quantity: req.session.cart[productId].quantity, totalPrice });
+});
+
+/* REAL
 // Decrease Quantity
 router.post('/cart/:id/decrease', ensureLoggedIn, (req, res) => {
     const productId = req.params.id;
@@ -348,6 +377,25 @@ router.post('/cart/:id/decrease', ensureLoggedIn, (req, res) => {
     const totalPrice = calculateTotalPrice(req.session.cart);
     res.json({ quantity: req.session.cart[productId]?.quantity || 0, totalPrice });
 });
+*/
+
+//TEST dec quantity
+// Decrease Quantity
+router.post('/cart/:id/decrease', ensureLoggedIn, (req, res) => {
+    const productId = req.params.id;
+
+    if (req.session.cart && req.session.cart[productId]) {
+        if (req.session.cart[productId].quantity > 1) {
+            req.session.cart[productId].quantity -= 1;
+        } else {
+            delete req.session.cart[productId];
+        }
+    }
+
+    const totalPrice = calculateTotalPrice(req.session.cart);
+    res.json({ quantity: req.session.cart[productId]?.quantity || 0, totalPrice });
+});
+
 
 // Remove Item from Cart
 router.post('/cart/:id/remove', ensureLoggedIn, (req, res) => {
@@ -366,7 +414,7 @@ function calculateTotalPrice(cart) {
     let totalPrice = 0;
     for (const productId in cart) {
         const item = cart[productId];
-        if (item && typeof item.price === 'number' && item.quantity) {
+        if (item && typeof item.price === 'number' && typeof item.quantity === 'number' && item.quantity > 0) {
             totalPrice += item.price * item.quantity;
         }
     }
