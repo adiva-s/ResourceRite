@@ -73,6 +73,13 @@
         a:hover{
             font-size: 1.1em;
         }
+        .product-link {
+            color: black;
+            text-decoration: none;
+        }
+        .product-link:hover {
+            color:firebrick;
+        }
     </style>
 </head>
 <body>
@@ -125,7 +132,7 @@
         <div class="product-list">
             {{#each products}}
             <div class="product-item">
-                <h2><a href="/products/{{this._id}}">{{this.name}}</a></h2>
+                <h2><a href="/products/{{this._id}}" class="product-link">{{this.name}}</a></h2>
                 <img src="{{this.imageUrl}}" alt="{{this.name}}">
                 <h3><a href="/products/{{this._id}}">{{this.name}}</a></h3>
                 <p>Price: ${{this.price}}</p>
