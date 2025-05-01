@@ -36,26 +36,13 @@ Update your .env file:
 ``` bash
 MONGO_URI=mongodb://localhost:27017/resource_rite
 ```
-3. Configure your .env file:
-Create a .env file in the root folder:
-``` bash
-MONGO_URI=your_mongo_uri_here
-STRIPE_SECRET_KEY=your_stripe_secret_key_here
-EMAIL_USER=your_email_here@gmail.com
-EMAIL_PASS=your_email_app_password_here
-GOOGLE_CLIENT_ID=your_google_client_id_here
-GOOGLE_CLIENT_SECRET=your_google_client_secret_here
-```
-You’ll need to generate:
-Stripe Secret Key → from https://dashboard.stripe.com/test/apikeys
-Google OAuth Client ID/Secret → from Google Cloud Console (enable OAuth, authorized redirect http://localhost:3000/auth/google/callback)
 
-5. Install Stripe/Google Dependencies (in case needed_
+3. Install Stripe/Google Dependencies (in case needed_
 ```bash
 npm install stripe passport-google-oauth20
 ```
 
-6. . Start the App
+4. Start the App
 ``` bash
 node app.mjs
 ```
