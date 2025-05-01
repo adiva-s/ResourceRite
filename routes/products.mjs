@@ -162,23 +162,14 @@ router.post('/products/:id/save', ensureLoggedIn, async (req, res) => {
 // GET /cart - Display cart page
 router.get('/cart', ensureLoggedIn, (req, res) => {
     const cart = req.session.cart || {};
-    let totalPrice = 0;
-    let subtotal = 0;
-    let tax = 0;
+    const { subtotal, tax, totalPrice } = calculateTotalBreakdown(cart);    
+    
     const products = [];
 
     for (const productId in cart) {
         const item = cart[productId];
         products.push({ id: productId, ...item });
-        subtotal += item.price * item.quantity;
     }
-
-    // Round to 2 decimal places
-    tax = (subtotal * 0.07).toFixed(2);           
-    subtotal = subtotal.toFixed(2);               
-    totalPrice = (parseFloat(subtotal) + parseFloat(tax)).toFixed(2);
-
-
 
     res.render('cart', { products, subtotal, tax, totalPrice });
 });
@@ -196,13 +187,8 @@ router.post('/checkout', ensureLoggedIn, async (req, res) => {
 
         if (products.length === 0) return res.redirect('/cart');
 
-        // Calculate subtotal
-        const subtotal = products.reduce((sum, product) => {
-            const quantity = req.session.cart[product._id.toString()].quantity;
-            return sum + (product.price * quantity);
-        }, 0);
-
-        const tax = parseFloat((subtotal * 0.07).toFixed(2)); // 7% tax
+        // Calculate subtotal and tax
+        const { subtotal, tax } = calculateTotalBreakdown(req.session.cart);
 
         // Create line items for Stripe
         const lineItems = products.map(product => {
@@ -321,21 +307,6 @@ router.post('/products/:id/add-to-cart', ensureLoggedIn, async (req, res) => {
     }
 });
 
-/* REAL
-// Increase Quantity
-router.post('/cart/:id/increase', ensureLoggedIn, (req, res) => {
-    const productId = req.params.id;
-
-    if (req.session.cart && req.session.cart[productId]) {
-        req.session.cart[productId].quantity += 1;
-    }
-
-    const totalPrice = calculateTotalPrice(req.session.cart);
-    res.json({ quantity: req.session.cart[productId].quantity, totalPrice });
-});
-*/
-
-// TEST inc quantity
 // Increase Quantity
 router.post('/cart/:id/increase', ensureLoggedIn, async (req, res) => {
     const productId = req.params.id;
@@ -357,11 +328,10 @@ router.post('/cart/:id/increase', ensureLoggedIn, async (req, res) => {
         }
     }
 
-    const totalPrice = calculateTotalPrice(req.session.cart);
-    res.json({ quantity: req.session.cart[productId].quantity, totalPrice });
+    const { subtotal, tax, totalPrice } = calculateTotalBreakdown(req.session.cart);
+    res.json({ quantity: req.session.cart[productId].quantity, subtotal, tax, totalPrice });
 });
 
-/* REAL
 // Decrease Quantity
 router.post('/cart/:id/decrease', ensureLoggedIn, (req, res) => {
     const productId = req.params.id;
@@ -374,26 +344,8 @@ router.post('/cart/:id/decrease', ensureLoggedIn, (req, res) => {
         }
     }
 
-    const totalPrice = calculateTotalPrice(req.session.cart);
-    res.json({ quantity: req.session.cart[productId]?.quantity || 0, totalPrice });
-});
-*/
-
-//TEST dec quantity
-// Decrease Quantity
-router.post('/cart/:id/decrease', ensureLoggedIn, (req, res) => {
-    const productId = req.params.id;
-
-    if (req.session.cart && req.session.cart[productId]) {
-        if (req.session.cart[productId].quantity > 1) {
-            req.session.cart[productId].quantity -= 1;
-        } else {
-            delete req.session.cart[productId];
-        }
-    }
-
-    const totalPrice = calculateTotalPrice(req.session.cart);
-    res.json({ quantity: req.session.cart[productId]?.quantity || 0, totalPrice });
+    const { subtotal, tax, totalPrice } = calculateTotalBreakdown(req.session.cart);
+    res.json({ quantity: req.session.cart[productId]?.quantity || 0, subtotal, tax, totalPrice });
 });
 
 
@@ -405,11 +357,18 @@ router.post('/cart/:id/remove', ensureLoggedIn, (req, res) => {
         delete req.session.cart[productId];
     }
 
+    /* REAL
     const totalPrice = calculateTotalPrice(req.session.cart);
     res.json({ quantity: 0, totalPrice });
+    */
+
+    // TEST inc/dec quant
+    const { subtotal, tax, totalPrice } = calculateTotalBreakdown(req.session.cart);
+    res.json({ quantity: req.session.cart[productId]?.quantity || 0, subtotal, tax, totalPrice });
 });
 
 // Helper function to calculate the total price
+/* REAL
 function calculateTotalPrice(cart) {
     let totalPrice = 0;
     for (const productId in cart) {
@@ -420,6 +379,29 @@ function calculateTotalPrice(cart) {
     }
     return totalPrice.toFixed(2);  // Return as a string formatted to 2 decimal places
 }
+*/
+
+// TEST calc total price for inc/dec quant
+// Helper function to calculate the total price
+function calculateTotalBreakdown(cart) {
+    let subtotal = 0;
+    for (const productId in cart) {
+        const item = cart[productId];
+        if (item && typeof item.price === 'number' && typeof item.quantity === 'number' && item.quantity > 0) {
+            subtotal += item.price * item.quantity;
+        }
+    }
+
+    const tax = parseFloat((subtotal * 0.07).toFixed(2));
+    const totalPrice = parseFloat((subtotal + tax).toFixed(2));
+
+    return {
+        subtotal: subtotal.toFixed(2),
+        tax: tax.toFixed(2),
+        totalPrice: totalPrice.toFixed(2)
+    };
+}
+
 
 
 // Clear Cart
