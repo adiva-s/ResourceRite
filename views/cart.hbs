@@ -141,53 +141,24 @@
             }
         }
     }
-
-    /* REAL
-    document.querySelectorAll('.increase-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
-            e.preventDefault();
-            const productId = e.target.closest('tr').dataset.productId;
-            updateCart(productId, 'increase');
-        });
-    });
-
-    document.querySelectorAll('.decrease-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
-            e.preventDefault();
-            const productId = e.target.closest('tr').dataset.productId;
-            updateCart(productId, 'decrease');
-        });
-    });
-    */
-
-    // TEST increase and decrease button
+    
+    // increase and decrease button
     document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.increase-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
-        const row = e.target.closest('tr');
-        const quantitySpan = row.querySelector('.quantity');
-        const currentQty = parseInt(quantitySpan.textContent, 10);
-        const maxStock = parseInt(row.dataset.stock, 10);
-
-        if (currentQty < maxStock) {
-            quantitySpan.textContent = currentQty + 1;
-            // You may also want to send an update to the server here
-        } else {
-            alert('Only ' + maxStock + ' left in stock!');
-        }
+        document.querySelectorAll('.increase-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const productId = e.target.closest('tr').dataset.productId;
+                updateCart(productId, 'increase');
+            });
         });
-    });
 
-    document.querySelectorAll('.decrease-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
-        const row = e.target.closest('tr');
-        const quantitySpan = row.querySelector('.quantity');
-        const currentQty = parseInt(quantitySpan.textContent, 10);
-        if (currentQty > 1) {
-            quantitySpan.textContent = currentQty - 1;
-        }
+        document.querySelectorAll('.decrease-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const productId = e.target.closest('tr').dataset.productId;
+                updateCart(productId, 'decrease');
+            });
         });
-    });
     });
 
 
