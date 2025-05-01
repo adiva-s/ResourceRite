@@ -161,34 +161,36 @@
     */
 
     // TEST increase and decrease button
-    document.addEventListener("DOMContentLoaded", () => {
-        document.querySelectorAll(".increase-btn").forEach(button => {
-            button.addEventListener("click", () => {
-                const row = button.closest("tr");
-                const quantitySpan = row.querySelector(".quantity");
-                const currentQuantity = parseInt(quantitySpan.textContent);
-                const stock = parseInt(row.getAttribute("data-stock"));
+    document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.increase-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+        const row = e.target.closest('tr');
+        const quantitySpan = row.querySelector('.quantity');
+        const currentQty = parseInt(quantitySpan.textContent, 10);
+        const maxStock = parseInt(row.dataset.stock, 10);
 
-                if (currentQuantity < stock) {
-                    quantitySpan.textContent = currentQuantity + 1;
-                } else {
-                    alert("⚠️ Sorry, only " + stock + " left in stock.");
-                }
-            });
-        });
-
-        document.querySelectorAll(".decrease-btn").forEach(button => {
-            button.addEventListener("click", () => {
-                const row = button.closest("tr");
-                const quantitySpan = row.querySelector(".quantity");
-                const currentQuantity = parseInt(quantitySpan.textContent);
-
-                if (currentQuantity > 1) {
-                    quantitySpan.textContent = currentQuantity - 1;
-                }
-            });
+        if (currentQty < maxStock) {
+            quantitySpan.textContent = currentQty + 1;
+            // You may also want to send an update to the server here
+        } else {
+            alert('Only ' + maxStock + ' left in stock!');
+        }
         });
     });
+
+    document.querySelectorAll('.decrease-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+        const row = e.target.closest('tr');
+        const quantitySpan = row.querySelector('.quantity');
+        const currentQty = parseInt(quantitySpan.textContent, 10);
+        if (currentQty > 1) {
+            quantitySpan.textContent = currentQty - 1;
+        }
+        });
+    });
+    });
+
+
 
 
 
